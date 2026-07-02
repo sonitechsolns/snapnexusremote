@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Host Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Carry over the vibe chosen on the homepage preview, if any.
+        (function () {
+            try {
+                var t = localStorage.getItem('snapnexus_theme_preview') || 'default';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ---------- Theme tokens (mirrors index.html / app.html) ---------- */
+        :root {
+            /* Brand font is fixed — never overridden by a theme block. */
+            --font-brand: 'Syne', sans-serif;
+        }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --bg-solid: #020617;
+            --surface-bg: rgba(30, 41, 59, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-strong: #2563eb;
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+            --radius-card: 24px;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --bg-solid: #fdf6f2;
+            --surface-bg: rgba(255, 255, 255, 0.8);
+            --surface-border: rgba(196, 154, 108, 0.4);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-strong: #a9824f;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+            --radius-card: 30px;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --bg-solid: #020203;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.14);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-card: 14px;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --bg-solid: #070110;
+            --surface-bg: rgba(20, 4, 32, 0.72);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-strong: #ff00c8;
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+            --radius-card: 20px;
+        }
+
+        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+
+        /* Continuous Background Animation */
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+
+        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap, grain) */
+        [data-theme="corporate"] .liquid-mesh {
+            background:
+                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
+                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
+                #020203;
+            animation: none;
+        }
+        [data-theme="corporate"] .liquid-mesh::before {
+            content: '';
+            position: absolute;
+            top: 6%; left: -10%;
+            width: 78%; height: 80%;
+            background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
+            filter: blur(45px);
+            animation: corporateBlobMorph 26s ease-in-out infinite alternate;
+        }
+        [data-theme="corporate"] .liquid-mesh::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwICAwIDAgMCAwLjEyIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCglMjNuKSIvPjwvc3ZnPg==");
+            background-size: 220px 220px;
+            background-repeat: repeat;
+            mix-blend-mode: overlay;
+            opacity: 0.55;
+        }
+        @keyframes corporateBlobMorph {
+            0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
+            50%  { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); }
+            100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
+        }
+
+        .glass-panel { background: var(--surface-bg); backdrop-filter: blur(16px); border: 1px solid var(--surface-border); border-radius: var(--radius-card); padding: 40px; width: 100%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 10; transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease; }
+        /* Title shows the brand name initially ("SnapNexus Host") — keep it on the fixed brand font */
+        h1 { font-family: var(--font-brand); font-size: 2rem; margin-bottom: 8px; text-align: center; color: var(--text-primary); }
+        p.subtitle { color: var(--text-secondary); text-align: center; margin-bottom: 32px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+        input { width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-family: inherit; font-size: 1rem; transition: all 0.3s ease; }
+        input:focus { outline: none; border-color: var(--accent); background: rgba(15, 23, 42, 0.8); }
+        .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+        .btn-primary:hover:not(:disabled) { background: var(--accent-strong); transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .toggle-text { text-align: center; margin-top: 24px; color: var(--text-secondary); cursor: pointer; font-weight: 600; transition: color 0.3s ease; }
+        .toggle-text:hover { color: var(--text-primary); }
+        .history-item { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+        .history-item:hover { background: rgba(30, 41, 59, 0.8); border-color: var(--accent); }
+        .history-item strong { display: block; font-size: 1.1rem; margin-bottom: 4px; color: white; }
+        .history-item span { font-size: 0.85rem; color: #94a3b8; }
+        .badge { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        #historySection { display: none; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .lucide-spin { animation: spin 1s linear infinite; }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+    <div class="glass-panel">
+        <h1 id="authTitle">SnapNexus Host</h1>
+        <p class="subtitle" id="authSubtitle">Sign in to manage your events</p>
+        <div id="authForm">
+            <div class="input-group" id="nameGroup" style="display: none;">
+                <label>Full Name</label>
+                <input type="text" id="nameInput" placeholder="John Doe">
+            </div>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="emailInput" placeholder="host@example.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="••••••••">
+            </div>
+            <button class="btn-primary" id="loginBtn">Sign In <i data-lucide="arrow-right"></i></button>
+            <p class="toggle-text" id="toggleAuth">Don't have an account? Create one.</p>
+        </div>
+        <div id="historySection">
+            <button class="btn-primary" id="createNewEventBtn" style="margin-bottom: 24px; background: #10b981;">
+                <i data-lucide="plus-circle"></i> Create New Event
+            </button>
+            <h3 style="font-family: 'Syne'; margin-bottom: 16px; font-size: 1.2rem;">Previous Events</h3>
+            <div id="historyList"></div>
+            <p class="toggle-text" id="logoutBtn" style="color: #ef4444; margin-top: 30px;">Sign Out</p>
+        </div>
+    </div>
+
+    <script>
+        let isSignup = false;
+        let currentUser = null;
+        let globalEventHistory = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            const authForm = document.getElementById('authForm');
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+
+            async function loadHistory() {
+                try {
+                    historyList.innerHTML = '<p style="color: #94a3b8; text-align: center;"><i data-lucide="loader-2" class="lucide-spin"></i> Loading events...</p>';
+                    lucide.createIcons();
+                    const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                        Appwrite.Query.equal('hostEmail', currentUser.email),
+                        Appwrite.Query.orderDesc('$createdAt')
+                    ]);
+                    
+                    globalEventHistory = res.documents;
+                    
+                    if(res.documents.length === 0) {
+                        historyList.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">No events found. Create your first one above!</p>';
+                        return;
+                    }
+                    
+                    historyList.innerHTML = '';
+                    res.documents.forEach(doc => {
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        const statusColor = doc.status === 'active' ? '#10b981' : '#ef4444'; 
+                        
+                        div.innerHTML = `
+                            <div>
+                                <strong>${doc.eventName}</strong>
+                                <span>${new Date(doc.$createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="badge" style="margin-bottom: 6px; display: inline-block;">${doc.tier}</span><br>
+                                <span style="font-size: 0.7rem; font-weight: 800; color: ${statusColor}; background: ${statusColor}20; padding: 3px 8px; border-radius: 6px; text-transform: uppercase;">
+                                    ${doc.status}
+                                </span>
+                            </div>
+                        `;
+                        div.addEventListener('click', () => { window.location.href = cfg.resolveUrl(`dashboard.html?event=${doc.eventId}`); });
+                        historyList.appendChild(div);
+                    });
+                } catch(e) { historyList.innerHTML = '<p style="color: #ef4444; text-align: center;">Failed to load history.</p>'; }
+            }
+
+            async function checkSession() {
+                try {
+                    currentUser = await account.get();
+                    
+                    // 5. VIP Subscription Engine - Timer & Tier handling
+                    let prefs = await account.getPrefs();
+                    if (prefs.subExpiry) {
+                        const now = Date.now();
+                        const bufferMs = 3 * 3600000; // 3 hours
+                        
+                        try {
+                            if (prefs.tier === 'pro' || prefs.tier === 'premium') {
+                                if (now > prefs.subExpiry) {
+                                    const activeReq = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                                        Appwrite.Query.equal('hostEmail', currentUser.email),
+                                        Appwrite.Query.equal('status', 'active')
+                                    ]);
+                                    for (let doc of activeReq.documents) {
+                                        await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { status: 'ended' });
+                                    }
+                                }
+                                if (now > prefs.subExpiry + bufferMs) {
+                                    const proReq = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                                        Appwrite.Query.equal('hostEmail', currentUser.email),
+                                        Appwrite.Query.notEqual('tier', 'starter')
+                                    ]);
+                                    for (let doc of proReq.documents) {
+                                        await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { tier: 'starter' });
+                                    }
+                                    await account.updatePrefs({ tier: 'starter', subExpiry: null });
+                                    prefs.tier = 'starter';
+                                }
+                            } else if (prefs.tier === 'vip') {
+                                if (now > prefs.subExpiry) {
+                                    const vipReq = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                                        Appwrite.Query.equal('hostEmail', currentUser.email),
+                                        Appwrite.Query.equal('tier', 'vip')
+                                    ]);
+                                    for (let doc of vipReq.documents) {
+                                        await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { tier: 'starter' });
+                                    }
+                                    await account.updatePrefs({ tier: 'starter', subExpiry: null });
+                                    prefs.tier = 'starter';
+                                }
+                            }
+                        } catch(e) { console.error('Subscription expiry update failed', e); }
+                    }
+
+                    authForm.style.display = 'none';
+                    historySection.style.display = 'block';
+                    document.getElementById('authTitle').innerText = `Welcome, ${currentUser.name || 'Host'}`;
+                    document.getElementById('authSubtitle').innerText = 'Your event dashboard';
+                    loadHistory();
+
+                    const planMap = {
+                        'pro': { amount: 499, name: 'Pro Plan' },
+                        'premium': { amount: 999, name: 'Premium Plan' },
+                        'vip': { amount: 2999, name: 'VIP Plan' }
+                    };
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const p = urlParams.get('plan');
+                    if (p && planMap[p]) {
+                        if (!confirm("By proceeding with this payment, you agree to our Privacy Policy and Terms of Service.")) {
+                            window.history.replaceState({}, document.title, 'login.html');
+                            return;
+                        }
+                        const planDetails = planMap[p];
+
+                        // OTP Verification Simulation
+                        const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
+                        alert(`[OTP SYSTEM] An OTP has been sent to ${currentUser.email} for verification.\\n\\nFor this demo, your OTP is: ${mockOtp}`);
+                        const userOtp = prompt(`Enter the 6-digit OTP sent to ${currentUser.email} to proceed to payment:`);
+                        if (userOtp !== mockOtp) {
+                            alert('Invalid OTP. Verification failed.');
+                            window.history.replaceState({}, document.title, 'login.html');
+                            return;
+                        }
+
+                        // Mock Email Logic
+                        const sendReceiptEmail = (email, planName, amount) => {
+                            console.log(`Sending receipt email to ${email} via sooperfast.net@yahoo.com...`);
+                            alert(`Verification complete! Receipt for ${planName} (₹${amount}) was mailed to ${email} securely from sooperfast.net@yahoo.com.`);
+                        };
+
+                        const options = {
+                            key: 'rzp_test_Sf5GBrljv03Pmk',
+                            amount: planDetails.amount * 100,
+                            currency: 'INR', 
+                            name: 'SnapNexus', 
+                            description: `Upgrade to ${planDetails.name}`,
+                            handler: async function (response) {
+                                const subExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                                await account.updatePrefs({ tier: p, subExpiry: subExpiry });
+                                
+                                try {
+                                    const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                                        Appwrite.Query.equal('hostEmail', currentUser.email),
+                                        Appwrite.Query.equal('status', 'active')
+                                    ]);
+                                    for (let doc of res.documents) {
+                                        await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { tier: p });
+                                    }
+                                } catch(e) { console.error('Failed to sync events', e); }
+                                
+                                sendReceiptEmail(currentUser.email, planDetails.name, planDetails.amount);
+
+                                alert(`Payment Successful! You are now on the ${planDetails.name}.`);
+                                window.location.href = 'login.html'; // Refresh without params
+                            },
+                            modal: {
+                                ondismiss: function() {
+                                    window.history.replaceState({}, document.title, 'login.html');
+                                }
+                            }
+                        };
+                        new window.Razorpay(options).open();
+                    } else if (p) {
+                        window.history.replaceState({}, document.title, 'login.html');
+                    }
+                } catch(err) {
+                    authForm.style.display = 'block';
+                    historySection.style.display = 'none';
+                }
+            }
+
+            document.getElementById('toggleAuth').addEventListener('click', () => {
+                isSignup = !isSignup;
+                document.getElementById('nameGroup').style.display = isSignup ? 'block' : 'none';
+                document.getElementById('loginBtn').innerHTML = isSignup ? 'Create Account <i data-lucide="user-plus"></i>' : 'Sign In <i data-lucide="arrow-right"></i>';
+                document.getElementById('toggleAuth').innerText = isSignup ? 'Back to Sign In' : "Don't have an account? Create one.";
+                lucide.createIcons();
+            });
+
+            document.getElementById('loginBtn').addEventListener('click', async () => {
+                const email = document.getElementById('emailInput').value;
+                const password = document.getElementById('passwordInput').value;
+                const name = document.getElementById('nameInput').value;
+                if(!email || !password) return alert('Email and password required.');
+                const btn = document.getElementById('loginBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i data-lucide="loader-2" class="lucide-spin"></i> Authenticating...';
+                lucide.createIcons();
+                try {
+                    if (isSignup) {
+                        await account.create(Appwrite.ID.unique(), email, password, name);
+                        await account.createEmailPasswordSession(email, password);
+                        await account.updatePrefs({ tier: 'starter' });
+                    } else { await account.createEmailPasswordSession(email, password); }
+                    window.location.reload();
+                } catch(e) { 
+                    alert('Error: ' + e.message); 
+                    btn.disabled = false;
+                    btn.innerHTML = isSignup ? 'Create Account <i data-lucide="user-plus"></i>' : 'Sign In <i data-lucide="arrow-right"></i>';
+                    lucide.createIcons();
+                }
+            });
+
+            document.getElementById('createNewEventBtn').addEventListener('click', async () => {
+                const btn = document.getElementById('createNewEventBtn');
+                btn.disabled = true;
+                const oldHtml = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="loader-2" class="lucide-spin"></i> Creating...';
+                lucide.createIcons();
+                
+                let userTier = 'starter';
+                try {
+                    const prefs = await account.getPrefs();
+                    if (prefs.tier) userTier = prefs.tier;
+                } catch(e) {}
+
+                const activeCount = globalEventHistory.filter(e => e.status === 'active').length;
+                let limit = 1;
+                if (userTier === 'premium') limit = 5;
+                if (userTier === 'vip') limit = Infinity;
+
+                if (activeCount >= limit) {
+                    alert(`Limit Reached: Your current plan allows only ${limit} active event(s) at a time.\\n\\nPlease click your active event below and press "End Event", or upgrade for more capacity.`);
+                    btn.disabled = false;
+                    btn.innerHTML = oldHtml;
+                    return;
+                }
+
+                const eventName = prompt('Enter Event Name for TV Wall:');
+                if (!eventName) {
+                    btn.disabled = false;
+                    btn.innerHTML = oldHtml;
+                    return;
+                }
+                
+                const realEventId = 'evt_' + Math.random().toString(36).substr(2, 9);
+
+                let initialTheme = 'default';
+                try { initialTheme = localStorage.getItem('snapnexus_theme_preview') || 'default'; } catch (e) {}
+
+                try {
+                    await databases.createDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, realEventId, {
+                        eventName: eventName,
+                        eventId: realEventId,
+                        tier: userTier,
+                        hostEmail: currentUser.email,
+                        status: 'active',
+                        theme: initialTheme
+                    });
+                    // Redirect according to tier
+                    if (userTier === 'vip') {
+                         window.location.href = `vip_dashboard.html?event=${realEventId}`;
+                    } else {
+                         window.location.href = `dashboard.html?event=${realEventId}`;
+                    }
+                } catch(err) { 
+                    alert('Failed to create event: ' + err.message); 
+                    btn.disabled = false;
+                    btn.innerHTML = oldHtml;
+                }
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await account.deleteSession('current');
+                window.location.reload();
+            });
+
+            checkSession();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Live Photo Wall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Urbanist', sans-serif;
+            background: #0f172a;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(to bottom, rgba(15,23,42,0.95), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 2px solid #ff9800;
+            background: white;
+            object-fit: contain;
+        }
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ff9800;
+            letter-spacing: 1px;
+        }
+        .event-badge {
+            background: rgba(255,152,0,0.2);
+            border: 1px solid rgba(255,152,0,0.5);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 800;
+            color: #ffb74d;
+            font-size: 0.9rem;
+        }
+        /* Main photo area */
+        .photo-wall {
+            flex: 1;
+            position: relative;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide-img {
+            position: absolute;
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slide-img.active {
+            opacity: 1;
+        }
+        .empty-message {
+            color: #64748b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+        }
+        /* Footer watermark (free tier style) */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15,23,42,0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #ff9800;
+            border: 1px solid rgba(255,152,0,0.3);
+            pointer-events: none;
+            z-index: 10;
+        }
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(15,23,42,0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            z-index: 20;
+            transition: 0.2s;
+            color: white;
+        }
+        .fullscreen-btn:hover {
+            background: rgba(255,152,0,0.6);
+        }
+        @media (max-width: 640px) {
+            .brand-title { font-size: 1rem; }
+            .event-badge { font-size: 0.7rem; padding: 4px 12px; }
+            .watermark { font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="brand-area">
+            <img src="SNAPN.png" alt="Logo" class="brand-logo">
+            <div class="brand-title">SnapNexus</div>
+        </div>
+        <div class="event-badge" id="eventBadge">📡 LIVE WALL</div>
+    </div>
+
+    <div class="photo-wall" id="photoWall">
+        <div class="empty-message" id="emptyMsg">Waiting for first photo...</div>
+        <img id="img1" class="slide-img" alt="slide">
+        <img id="img2" class="slide-img" alt="slide">
+    </div>
+
+    <div class="watermark">📸 SnapNexus · Live Photo Wall</div>
+    <button class="fullscreen-btn" id="fullscreenBtn">⛶ Fullscreen</button>
+
+    <script>
+        // Appwrite Configuration
+const { Client, Storage } = Appwrite;
+const PROJ_ID = '69d8eda100264f4e42ae';
+const BKT_ID = '69d8f2b800397ad57e50';
+
+const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(PROJ_ID);
+const storage = new Storage(client);
+
+// Appwrite Fetch Logic
+async function fetchPhotos() {
+    try {
+        const res = await storage.listFiles(BKT_ID);
+        if (res.files.length > 0) {
+            // Map Appwrite files to your existing { url } format
+            photos = res.files.map(f => ({
+                url: `https://cloud.appwrite.io/v1/storage/buckets/${BKT_ID}/files/${f.$id}/view?project=${PROJ_ID}`
+            }));
+        } else {
+            photos = [];
+        }
+        return true;
+    } catch (err) {
+        console.error('Appwrite fetch error:', err);
+        return false;
+    }
+}
+            
+
+        function startSlideshow() {
+            if (slideInterval) clearInterval(slideInterval);
+            if (photos.length === 0) {
+                emptyMsgDiv.style.display = 'block';
+                imgElements.forEach(img => img.classList.remove('active'));
+                return;
+            }
+            emptyMsgDiv.style.display = 'none';
+            // ensure currentIndex within bounds
+            if (currentIndex >= photos.length) currentIndex = 0;
+            // load current photo into active image
+            const nextImg = imgElements[activeImg];
+            nextImg.src = photos[currentIndex].url;
+            nextImg.classList.add('active');
+            // hide the other one
+            const otherImg = imgElements[1 - activeImg];
+            otherImg.classList.remove('active');
+
+            slideInterval = setInterval(() => {
+                if (photos.length === 0) return;
+                // move to next photo
+                currentIndex = (currentIndex + 1) % photos.length;
+                // prepare the inactive image
+                const nextActive = 1 - activeImg;
+                const nextImgEl = imgElements[nextActive];
+                nextImgEl.src = photos[currentIndex].url;
+                // crossfade: make new active, old inactive
+                nextImgEl.classList.add('active');
+                imgElements[activeImg].classList.remove('active');
+                activeImg = nextActive;
+            }, 6000); // change every 6 seconds
+        }
+
+        async function refreshAndUpdate() {
+            const changed = await fetchPhotos();
+            if (changed || photos.length > 0) {
+                // restart slideshow to reflect new photos
+                startSlideshow();
+            } else {
+                if (photos.length === 0) {
+                    emptyMsgDiv.style.display = 'block';
+                    imgElements.forEach(img => img.classList.remove('active'));
+                }
+            }
+        }
+
+        // Initial load
+        refreshAndUpdate();
+        // Poll every 5 seconds for new photos
+        setInterval(refreshAndUpdate, 5000);
+
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.warn(err));
+                fullscreenBtn.textContent = '✖ Exit';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.textContent = '⛶ Fullscreen';
+            }
+        }
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '✖ Exit';
+            } else {
+                fullscreenBtn.textContent = '⛶ Fullscreen';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="/config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Live TV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:wght@400;600;800&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        /* ---------- Theme tokens ---------- */
+        :root {
+            /* Brand font is fixed — never overridden by a theme block. */
+            --font-brand: 'Syne', sans-serif;
+        }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --bg-solid: #020617;
+            --surface-bg: rgba(0,0,0,0.5);
+            --surface-border: rgba(255,255,255,0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-strong: #fbbf24;
+            --accent-soft: rgba(59, 130, 246, 0.35);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --bg-solid: #fdf6f2;
+            --surface-bg: rgba(255,255,255,0.55);
+            --surface-border: rgba(196, 154, 108, 0.4);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-strong: #a9824f;
+            --accent-soft: rgba(201, 160, 99, 0.35);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --bg-solid: #020203;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.14);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.35);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --bg-solid: #070110;
+            --surface-bg: rgba(20, 4, 32, 0.55);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-strong: #ff00c8;
+            --accent-soft: rgba(0, 240, 255, 0.45);
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+        }
+
+        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); overflow:hidden; height:100vh; width:100vw; transition: background 0.4s ease, color 0.4s ease; }
+
+        .liquid-mesh { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-3; background:radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size:200% 200%; animation: meshAnim 15s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes meshAnim { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap, grain) */
+        [data-theme="corporate"] .liquid-mesh {
+            background:
+                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
+                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
+                #020203;
+            animation: none;
+        }
+        [data-theme="corporate"] .liquid-mesh::before {
+            content: '';
+            position: absolute;
+            top: 6%; left: -10%;
+            width: 78%; height: 80%;
+            background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
+            filter: blur(45px);
+            animation: corporateBlobMorph 26s ease-in-out infinite alternate;
+        }
+        [data-theme="corporate"] .liquid-mesh::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwICAwIDAgMCAwLjEyIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCglMjNuKSIvPjwvc3ZnPg==");
+            background-size: 220px 220px;
+            background-repeat: repeat;
+            mix-blend-mode: overlay;
+            opacity: 0.55;
+        }
+        @keyframes corporateBlobMorph {
+            0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
+            50%  { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); }
+            100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
+        }
+
+        /* The Un-collapsible QR Sidebar */
+        .sidebar { position: absolute; left: 0; top: 0; width: 300px; height: 100vh; background: var(--surface-bg); backdrop-filter: blur(10px); padding: 40px 20px; display: flex; flex-direction: column; align-items: center; z-index: 10; border-right: 1px solid var(--surface-border); transition: background 0.4s ease, border-color 0.4s ease; }
+        .sidebar h1 { font-family: var(--font-heading); font-size: 2rem; margin-bottom: 20px; text-align: center; color: var(--text-primary); }
+        .qr-placeholder { width: 200px; height: 200px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; margin-bottom: 20px; box-shadow: 0 0 25px var(--accent-soft); }
+
+        .slideshow-container { position: absolute; left: 300px; width: calc(100vw - 300px); height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; }
+        .photo-layer { position: absolute; max-width: 85%; max-height: 85%; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.95); transition: opacity 1s ease, transform 1s ease; }
+        .photo-layer.active { opacity: 1; transform: scale(1); }
+        .photo-layer img, .photo-layer video { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 40px var(--accent-soft); }
+
+        /* The "Ad" Ribbon Header/Footer */
+        .ad-banner { position: absolute; bottom: 0; left: 300px; width: calc(100vw - 300px); height: 60px; background: var(--surface-bg); backdrop-filter: blur(10px); border-top: 1px solid var(--surface-border); display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 15; transition: background 0.4s ease, border-color 0.4s ease; }
+        .ad-text { position: absolute; font-size: 1.2rem; color: var(--accent-strong); font-weight: 700; font-family: var(--font-brand); transition: opacity 0.8s ease, transform 0.8s ease; opacity: 0; transform: translateY(20px); text-transform: uppercase; letter-spacing: 1px; }
+        .ad-text.active { opacity: 1; transform: translateY(0); }
+        .ad-text.exit { opacity: 0; transform: translateY(-20px); }
+
+        .watermark { position: absolute; top: 30px; right: 40px; font-size: 1.2rem; color: var(--text-secondary); font-weight: 800; font-family: var(--font-brand); z-index: 10; text-shadow: 0 2px 10px black; }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+
+    <div class="sidebar">
+        <h1 id="tvEventName">Live Event</h1>
+        <p style="margin-bottom: 10px; color: var(--text-secondary);">Scan to upload!</p>
+        <div class="qr-placeholder">
+            <img id="qrImage" src="" style="width: 100%; border-radius: 10px;">
+        </div>
+        <p style="margin-top: auto; font-size: 0.9rem; color: var(--text-secondary); text-align: center;">Want this full screen? Host can upgrade to VIP.</p>
+    </div>
+
+    <div class="slideshow-container">
+        <div id="layer1" class="photo-layer"></div>
+        <div id="layer2" class="photo-layer"></div>
+    </div>
+
+    <div class="watermark">Powered by SnapNexus</div>
+
+    <div class="ad-banner">
+        <div class="ad-text active" id="ad1">Host your own interactive photo wall at SnapNexus.in</div>
+        <div class="ad-text" id="ad2">Upgrade to VIP to remove this banner - SnapNexus.in</div>
+        <div class="ad-text" id="ad3">Soni Tech Solutions - Web Development</div>
+    </div>
+
+    <script>
+        const cfg = window.SnapNexus;
+        const client = new Appwrite.Client()
+            .setEndpoint(cfg.ENDPOINT)
+            .setProject(cfg.PROJECT_ID);
+        const databases = new Appwrite.Databases(client);
+        const storage = new Appwrite.Storage(client);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        const isDemo = urlParams.get('isDemo') === 'true';
+        if (!eventId) { document.body.innerHTML = '<h1 style="color:white; text-align:center; padding-top:20vh;">Invalid Link</h1>'; throw new Error("Halt"); }
+
+        document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(cfg.resolveUrl(`app.html?event=${eventId}`))}`;
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme || 'default');
+        }
+
+        function renderLayer(el, item) {
+            if (!item) { el.innerHTML = ''; return; }
+            if (item.type === 'video') {
+                el.innerHTML = `<video src="${item.url}" autoplay muted loop playsinline></video>`;
+            } else {
+                el.innerHTML = `<img src="${item.url}" alt="">`;
+            }
+        }
+
+        let photos = [];
+        let currentIndex = 0;
+        let activeLayer = 1;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const layer1 = document.getElementById('layer1');
+            const layer2 = document.getElementById('layer2');
+
+            if (isDemo) {
+                document.getElementById('tvEventName').innerText = 'Live Demo Room';
+            } else {
+                try {
+                    const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [ Appwrite.Query.equal('eventId', eventId) ]);
+                    if (res.documents.length > 0) {
+                        document.getElementById('tvEventName').innerText = res.documents[0].eventName;
+                        applyTheme(res.documents[0].theme);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            async function fetchPhotos() {
+                try {
+                    const res = await storage.listFiles(cfg.BUCKET_ID, [
+                        Appwrite.Query.startsWith('name', eventId + '_'), Appwrite.Query.limit(100), Appwrite.Query.orderDesc('$createdAt')
+                    ]);
+                    const newItems = res.files.map(f => ({
+                        url: storage.getFileView(cfg.BUCKET_ID, f.$id).href,
+                        type: (f.mimeType || '').startsWith('video/') ? 'video' : 'image'
+                    }));
+                    if (JSON.stringify(newItems) !== JSON.stringify(photos)) {
+                        photos = newItems;
+                        if (photos.length > 0 && !layer1.classList.contains('active') && !layer2.classList.contains('active')) {
+                            renderLayer(layer1, photos[0]);
+                            layer1.classList.add('active');
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            function nextSlide() {
+                if (photos.length === 0) return;
+                currentIndex = (currentIndex + 1) % photos.length;
+                const nextItem = photos[currentIndex];
+                if (activeLayer === 1) { renderLayer(layer2, nextItem); layer2.classList.add('active'); layer1.classList.remove('active'); activeLayer = 2; }
+                else { renderLayer(layer1, nextItem); layer1.classList.add('active'); layer2.classList.remove('active'); activeLayer = 1; }
+            }
+
+            fetchPhotos(); setInterval(fetchPhotos, 1500); setInterval(nextSlide, 4500);
+
+            async function checkEventStatus() {
+                if (isDemo) return;
+                try {
+                    const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [ Appwrite.Query.equal('eventId', eventId) ]);
+                    if (res.documents.length > 0 && res.documents[0].status === 'ended') {
+                        document.body.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; background:#020617; z-index:9999; position:absolute; top:0; left:0;"><h1 style="font-size: 4rem; color: #ef4444; font-family:\'Syne\';">Event Ended</h1><p style="color: #94a3b8; font-size: 1.5rem; margin-top: 10px;">Thanks for participating! - SnapNexus</p></div>';
+                    } else if (res.documents.length > 0) {
+                        applyTheme(res.documents[0].theme);
+                    }
+                } catch(e) {}
+            }
+            setInterval(checkEventStatus, 5000);
+
+            // Ad Rotation Logic
+            const ads = [document.getElementById('ad1'), document.getElementById('ad2'), document.getElementById('ad3')];
+            let currentAdIndex = 0;
+
+            setInterval(() => {
+                const currentAd = ads[currentAdIndex];
+                currentAd.classList.remove('active');
+                currentAd.classList.add('exit');
+
+                currentAdIndex = (currentAdIndex + 1) % ads.length;
+                const nextAd = ads[currentAdIndex];
+
+                setTimeout(() => {
+                    currentAd.classList.remove('exit');
+                    nextAd.classList.add('active');
+                }, 800);
+
+            }, 15000);
+        });
+    </script>
+</body>
+</html>

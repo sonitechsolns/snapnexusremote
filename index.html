@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SnapNexus — Live Interactive Photo Wall</title>
+    <meta name="description" content="Guests scan, snap, and see photos on the big screen instantly. Premium plans for weddings & events.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta property="og:image" content="https://snapnexus.in/SNAPN.png">
+    <link rel="preload" as="image" href="/SNAPN.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script>
+        // Apply any previously chosen vibe-preview theme before paint to avoid a flash of the default look.
+        (function () {
+            try {
+                var t = localStorage.getItem('snapnexus_theme_preview') || 'default';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="/config.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ---------- Theme tokens ---------- */
+        :root {
+            /* Brand font is fixed — never overridden by a theme block. */
+            --font-brand: 'Syne', sans-serif;
+        }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --bg-solid: #020617;
+            --surface-bg: rgba(20, 30, 55, 0.45);
+            --surface-border: rgba(255, 255, 255, 0.2);
+            --surface-border-soft: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-strong: #4f46e5;
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', system-ui, sans-serif;
+            --radius-card: 32px;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --bg-solid: #fdf6f2;
+            --surface-bg: rgba(255, 255, 255, 0.55);
+            --surface-border: rgba(196, 154, 108, 0.45);
+            --surface-border-soft: rgba(196, 154, 108, 0.25);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-strong: #a9824f;
+            --accent-soft: rgba(201, 160, 99, 0.18);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+            --radius-card: 36px;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --bg-solid: #020203;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.16);
+            --surface-border-soft: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.18);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-card: 16px;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --bg-solid: #070110;
+            --surface-bg: rgba(20, 4, 32, 0.5);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --surface-border-soft: rgba(255, 0, 200, 0.2);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-strong: #ff00c8;
+            --accent-soft: rgba(0, 240, 255, 0.18);
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', system-ui, sans-serif;
+            --radius-card: 24px;
+        }
+
+        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); overflow-x: hidden; line-height: 1.5; transition: background 0.4s ease, color 0.4s ease; }
+        h1, h2, h3, .price, .step-number { font-family: var(--font-heading); }
+
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+
+        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap). Grain comes from the existing .noise-overlay below. */
+        [data-theme="corporate"] .liquid-mesh {
+            background:
+                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
+                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
+                #020203;
+            animation: none;
+        }
+        [data-theme="corporate"] .liquid-mesh::before {
+            content: '';
+            position: absolute;
+            top: 6%; left: -10%;
+            width: 78%; height: 80%;
+            background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
+            filter: blur(45px);
+            animation: corporateBlobMorph 26s ease-in-out infinite alternate;
+        }
+        @keyframes corporateBlobMorph {
+            0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
+            50%  { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); }
+            100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
+        }
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"); opacity: 0.4; }
+
+        .glass-deep { background: var(--surface-bg); backdrop-filter: blur(24px); border: 1px solid var(--surface-border-soft); transition: background 0.4s ease, border-color 0.4s ease; }
+        .glass-card { background: var(--surface-bg); backdrop-filter: blur(12px); border: 1px solid var(--surface-border); border-radius: var(--radius-card); transition: transform 0.25s ease, box-shadow 0.3s, background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease; }
+        .glass-card:hover { transform: translateY(-4px); box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4); }
+
+        .sticky-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 40px; transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); background: rgba(2, 6, 23, 0.65); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sticky-header.shrink { padding: 12px 40px; background: rgba(2, 6, 23, 0.85); }
+        .header-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .logo-img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); background: #fff; }
+        /* Brand wordmark — fixed font + treatment, regardless of theme */
+        .logo-text { font-family: var(--font-brand); font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #fde047, #f59e0b, #d97706); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
+
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a { color: #e2e8f0; text-decoration: none; font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: #60a5fa; }
+
+        .btn-physics { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 28px; font-weight: 800; font-size: 1rem; font-family: var(--font-body); border-radius: 60px; border: none; cursor: pointer; transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s, background 0.2s, filter 0.2s; background: linear-gradient(105deg, var(--accent), var(--accent-strong)); color: white; box-shadow: 0 8px 20px var(--accent-soft); text-decoration: none; }
+        .btn-physics:hover { transform: translateX(2px) translateY(-2px); filter: brightness(1.08); box-shadow: 0 14px 28px var(--accent-soft); }
+        .btn-physics:active { transform: scale(0.95) translateY(2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-outline { background: rgba(255,255,255,0.08); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); box-shadow: none; }
+        .btn-outline:hover { background: rgba(255,255,255,0.15); transform: translateX(2px) translateY(-2px); }
+        .btn-gold { background: linear-gradient(105deg, #fbbf24, #f59e0b); color: #020617; box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+        .btn-gold:hover { box-shadow: 0 14px 28px rgba(245,158,11,0.45); }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+        .hero { padding-top: 160px; padding-bottom: 80px; text-align: center; position: relative; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-soft); border: 1px solid var(--surface-border-soft); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 24px; animation: floatHero 4s ease-in-out infinite; transition: background 0.4s ease, color 0.4s ease; }
+        @keyframes floatHero { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+        .hero h1 { font-size: clamp(2.8rem, 7vw, 4.8rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--text-primary), var(--text-secondary), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0 24px; transition: background 0.4s ease; }
+        .hero-sub { font-size: 1.25rem; max-width: 680px; margin: 0 auto 40px; color: var(--text-secondary); font-weight: 500; }
+        .hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+
+        .section-title { text-align: center; font-size: 2.6rem; font-weight: 800; margin: 100px 0 48px; color: var(--text-primary); }
+        .steps-grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-bottom: 80px; }
+        .step-card { flex: 1; min-width: 280px; padding: 40px 32px; text-align: center; color: var(--text-primary); }
+        .step-card p { color: var(--text-secondary); }
+        .step-icon-wrapper { width: 70px; height: 70px; margin: 0 auto 24px; background: var(--accent-soft); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--accent); border: 1px solid var(--surface-border); transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease; }
+
+        /* ---------- Theme Picker (homepage "experience") ---------- */
+        .vibe-section { text-align: center; margin: 60px 0 100px; }
+        .vibe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto; }
+        .theme-swatch { cursor: pointer; border-radius: 20px; padding: 20px; border: 2px solid var(--surface-border); background: var(--surface-bg); transition: 0.2s; text-align: left; }
+        .theme-swatch:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .theme-swatch.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .theme-swatch-preview { height: 64px; border-radius: 12px; margin-bottom: 14px; }
+        .theme-swatch-label { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 6px; color: var(--text-primary); }
+        .theme-swatch-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+        .theme-swatch-check { display: none; color: var(--accent); width: 16px; height: 16px; }
+        .theme-swatch.active .theme-swatch-check { display: inline-flex; }
+
+        .dashboard-preview { background: var(--surface-bg); backdrop-filter: blur(16px); border-radius: 48px; padding: 56px 40px; margin: 80px 0; border: 1px solid var(--surface-border-soft); transition: background 0.4s ease, border-color 0.4s ease; }
+        .dashboard-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; }
+        .dashboard-text { flex: 1; min-width: 300px; }
+        .dashboard-text h3 { font-size: 2.2rem; margin-bottom: 20px; line-height: 1.2; }
+        .feature-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fbbf24; border-radius: 40px; padding: 6px 16px; font-size: 0.85rem; font-weight: 700; margin-bottom: 24px; }
+        .mockup { flex: 1; min-width: 300px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 24px; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px; }
+        .mockup-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+        .mockup-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; width: 100%; }
+
+        .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 60px 0; }
+        .price-card { padding: 36px 24px; text-align: center; transition: all 0.3s; position: relative; display: flex; flex-direction: column; }
+        .price-card.vip { transform: scale(1.03); border: 1px solid rgba(251,191,36,0.6); box-shadow: 0 0 40px rgba(251,191,36,0.15); background: rgba(20, 30, 55, 0.75); z-index: 2; }
+        .most-popular { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: linear-gradient(105deg, #fbbf24, #f59e0b); color: #020617; font-weight: 800; font-family: 'Urbanist', sans-serif; padding: 6px 20px; border-radius: 60px; font-size: 0.8rem; white-space: nowrap; box-shadow: 0 4px 12px rgba(245,158,11,0.4); }
+        .price { font-size: 2.8rem; font-weight: 800; margin: 20px 0; color: var(--text-primary); }
+        .price-card.vip .price { color: #facc15; }
+        .price small { font-size: 1rem; font-weight: 500; color: var(--text-secondary); font-family: var(--font-body); }
+        .price-card ul { list-style: none; margin: 24px 0 32px; flex-grow: 1; }
+        .price-card li { margin: 14px 0; font-weight: 500; display: flex; align-items: center; text-align: left; gap: 12px; color: var(--text-secondary); }
+        .price-card li i { color: var(--accent); width: 18px; height: 18px; flex-shrink: 0; }
+        .price-card.vip li i { color: #fbbf24; }
+
+        .mobile-sticky-cta { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1100; display: none; width: calc(100% - 40px); max-width: 360px; background: rgba(2,6,23,0.85); backdrop-filter: blur(24px); border-radius: 60px; padding: 10px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .mobile-sticky-cta .btn-physics { width: 100%; padding: 14px; }
+
+        footer { margin-top: 100px; padding: 60px 32px 40px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 32px; margin-bottom: 32px; flex-wrap: wrap; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-weight: 600; transition: color 0.2s; cursor: pointer; }
+        footer p { color: var(--text-secondary); }
+        footer p a { color: var(--accent); font-weight: 600; text-decoration: underline; transition: color 0.2s; }
+        footer p a:hover { color: var(--accent-strong); }
+
+        .tier-indicator { margin-top: auto; display: none; padding-top: 15px; text-align: center; font-size: 0.9rem; color: #10b981; font-weight: bold; }
+        
+        @media (max-width: 1024px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; } .price-card.vip { transform: scale(1); } }
+        @media (max-width: 768px) { .sticky-header { padding: 16px 20px; } .nav-links { display: none; } .pricing-grid { grid-template-columns: 1fr; } .mobile-sticky-cta { display: block; } .hero { padding-top: 150px; } .container { padding: 0 20px; } .dashboard-preview { padding: 40px 24px; } }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+    <div class="noise-overlay"></div>
+
+    <header class="sticky-header" id="stickyHeader">
+        <div class="header-container">
+            <a class="logo" href="index.html" aria-label="SnapNexus Home"><img src="SNAPN.png" alt="SnapNexus Logo" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">SnapNexus</span></a>
+            <nav class="nav-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="login.html" id="navLoginBtn">Host Login</a><a href="dashboard.html" class="btn-physics btn-outline" style="padding: 8px 20px;">Dashboard</a></nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero" data-aos="fade-up" data-aos-duration="1200">
+            <div class="hero-badge"><i data-lucide="sparkles" style="width:16px; height:16px;"></i> Premium Live Experience</div>
+            <h1>Live photo wall.<br>Zero app required.</h1>
+            <p class="hero-sub">Guests scan, snap, and appear instantly on the big screen. The ultimate interactive gallery for weddings, parties, and corporate events.</p>
+            <div class="hero-cta">
+                <button onclick="launchDemo()" class="btn-physics btn-gold">✨ Try Live Demo Now</button>
+                <a href="login.html" class="btn-physics">Start Free Trial <i data-lucide="arrow-right" style="width:18px;"></i></a>
+                <a href="#pricing" class="btn-physics btn-outline">View Premium Plans</a>
+            </div>
+        </section>
+
+        <div id="features" data-aos="fade-up"><h2 class="section-title">How the <span style="color:#60a5fa;">Magic</span> Happens</h2></div>
+        <div class="steps-grid"><div class="glass-card step-card" data-aos="zoom-in-up" data-aos-delay="100"><div class="step-icon-wrapper"><i data-lucide="qr-code" style="width:36px; height:36px;"></i></div><h3 style="margin: 16px 0;">1. Scan QR</h3><p>Display your QR. Guests scan with their native camera to instantly open the upload portal.</p></div><div class="glass-card step-card" data-aos="zoom-in-up" data-aos-delay="200"><div class="step-icon-wrapper"><i data-lucide="upload-cloud" style="width:36px; height:36px;"></i></div><h3 style="margin: 16px 0;">2. Upload Photo</h3><p>Guests snap a fresh photo or choose from their gallery. No app downloads, no account creation.</p></div><div class="glass-card step-card" data-aos="zoom-in-up" data-aos-delay="300"><div class="step-icon-wrapper"><i data-lucide="monitor-play" style="width:36px; height:36px;"></i></div><h3 style="margin: 16px 0;">3. Instant Display</h3><p>Photos instantly sync to the big screen via the cloud, creating a dynamic, shared visual experience.</p></div></div>
+
+        <section class="vibe-section" data-aos="fade-up">
+            <h2 class="section-title" style="margin-top: 0;">Pick Your Event's <span style="color:#60a5fa;">Vibe</span></h2>
+            <p class="hero-sub" style="margin-top: -24px;">This whole page is a live preview — every theme you host can choose for your guest upload page and TV wall.</p>
+            <div class="vibe-grid" id="vibePickerGrid">
+                <div class="theme-swatch" data-theme="default">
+                    <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #020617, #3b82f6);"></div>
+                    <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Default</div>
+                    <div class="theme-swatch-desc">Sleek dark blue, all-purpose</div>
+                </div>
+                <div class="theme-swatch" data-theme="wedding">
+                    <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #fff7f3, #f6c9d0, #c9a063);"></div>
+                    <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Wedding</div>
+                    <div class="theme-swatch-desc">Soft pastels, elegant serif</div>
+                </div>
+                <div class="theme-swatch" data-theme="corporate">
+                    <div class="theme-swatch-preview" style="background: radial-gradient(ellipse 70% 65% at 30% 55%, #f3fa7a 0%, #d9a01f 30%, #b16d02 55%, transparent 80%), radial-gradient(ellipse 60% 50% at 15% 10%, rgba(10,69,112,0.7), transparent 65%), #020203;"></div>
+                    <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Corporate</div>
+                    <div class="theme-swatch-desc">Aurora mesh, premium keynote</div>
+                </div>
+                <div class="theme-swatch" data-theme="party">
+                    <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #070110, #5b0fb5, #ff00c8);"></div>
+                    <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Party</div>
+                    <div class="theme-swatch-desc">Dark mode, neon accents</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-preview glass-card" data-aos="fade-right" data-aos-duration="1000"><div class="dashboard-grid"><div class="dashboard-text"><div class="feature-badge"><i data-lucide="crown" style="width:14px; height:14px;"></i> VIP Dashboard</div><h3>Total Control.<br>Live Moderation.</h3><p>Remove unwanted photos instantly, download all memories as a high-res ZIP, customize the TV loop, and watch live engagement stats.</p><div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;"><span style="display:flex; gap:8px;"><i data-lucide="shield-alert" style="color:#ef4444;"></i> Live Kill-Switch</span><span style="display:flex; gap:8px;"><i data-lucide="image-off" style="color:#60a5fa;"></i> Ad-Free & White-Labeled</span><span style="display:flex; gap:8px;"><i data-lucide="download" style="color:#10b981;"></i> Bulk Media Export</span></div></div><div class="mockup"><div class="mockup-header"><span style="font-family:'Syne'; font-weight:700;">Host Console</span><i data-lucide="layout-dashboard" style="width:20px; color:#cbd5e1;"></i></div><div style="display:flex; gap:12px;"><div class="mockup-bar" style="width:30%; background:rgba(59,130,246,0.3);"></div><div class="mockup-bar" style="width:70%;"></div></div><div class="mockup-bar"></div><div class="mockup-bar" style="width:80%;"></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;"><div style="height:80px; background:rgba(255,255,255,0.05); border-radius:12px;"></div><div style="height:80px; background:rgba(255,255,255,0.05); border-radius:12px;"></div></div></div></div></section>
+
+        <section id="pricing" data-aos="fade-up"><h2 class="section-title">Flexible <span style="color:#facc15;">Pricing</span> for Every Event</h2></section>
+        <div class="pricing-grid" data-aos="fade-up" data-aos-delay="50">
+            <div class="glass-card price-card" data-aos="flip-left" data-aos-delay="100">
+                <h3>Starter</h3><div class="price">₹0 <small>/event</small></div>
+                <ul><li><i data-lucide="check"></i> Basic TV loop</li><li><i data-lucide="check"></i> SnapNexus watermark</li><li><i data-lucide="check"></i> Partner Ads displayed</li><li><i data-lucide="check"></i> Max 50 photos</li></ul>
+                <button onclick="handlePlan('starter')" class="btn-physics btn-outline">Deploy Free Wall</button>
+                <div class="tier-indicator" id="ind-starter">Current Plan</div>
+            </div>
+            <div class="glass-card price-card" data-aos="flip-left" data-aos-delay="200">
+                <h3>Pro</h3><div class="price">₹499 <small>/event</small></div>
+                <ul><li><i data-lucide="check"></i> No watermark</li><li><i data-lucide="check"></i> Basic moderation</li><li><i data-lucide="check"></i> Unlimited photos</li><li><i data-lucide="check"></i> Email support</li></ul>
+                <button onclick="handlePlan('pro')" class="btn-physics">Choose Pro</button>
+                <div class="tier-indicator" id="ind-pro">Current Plan</div>
+            </div>
+            <div class="glass-card price-card" data-aos="flip-left" data-aos-delay="300">
+                <h3>Premium</h3><div class="price">₹999 <small>/event</small></div>
+                <ul><li><i data-lucide="check"></i> High-res downloads</li><li><i data-lucide="check"></i> Custom QR codes</li><li><i data-lucide="check"></i> Analytics dashboard</li><li><i data-lucide="check"></i> Priority queue</li></ul>
+                <button onclick="handlePlan('premium')" class="btn-physics" style="background: #10b981;">Go Premium</button>
+                <div class="tier-indicator" id="ind-premium">Current Plan</div>
+            </div>
+            <div class="glass-card price-card vip" data-aos="flip-left" data-aos-delay="400">
+                <div class="most-popular">⭐ MAXIMUM POWER</div>
+                <h3>VIP / Whale</h3><div class="price">₹2,999 <small>/mo</small></div>
+                <ul><li><i data-lucide="check"></i> Full dashboard</li><li><i data-lucide="check"></i> Live kill-switch</li><li><i data-lucide="check"></i> Custom ad injection</li><li><i data-lucide="check"></i> White‑labeled</li><li><i data-lucide="check"></i> Priority 24/7 support</li></ul>
+                <button onclick="handlePlan('vip')" class="btn-physics btn-gold">Secure VIP Pass</button>
+                <div class="tier-indicator" id="ind-vip">Current Plan</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="mobile-sticky-cta"><button onclick="handlePlan('vip')" class="btn-physics btn-gold"><i data-lucide="zap"></i> Upgrade to VIP ₹2999</button></div>
+
+    <footer class="glass-deep">
+        <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Security</a><a href="mailto:support@snapnexus.app">Contact Support</a></div>
+        <p>© 2026 SnapNexus. A product by <a href="https://soni-tech-solutions.vercel.app/" target="_blank" rel="noopener">Soni Tech Solutions</a>.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        lucide.createIcons();
+        AOS.init({ duration: 900, once: true, offset: 50 });
+        gsap.registerPlugin(ScrollTrigger);
+        const header = document.getElementById('stickyHeader');
+        ScrollTrigger.create({ trigger: document.body, start: "top top", end: "+=100", onUpdate: (self) => { if (self.progress > 0) header.classList.add('shrink'); else header.classList.remove('shrink'); } });
+        document.querySelectorAll('.btn-physics').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.style.transition = 'transform 0.05s ease');
+            btn.addEventListener('mouseup', () => btn.style.transition = 'transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1)');
+        });
+
+        // Appwrite & Razorpay Integration
+        const cfg = window.SnapNexus;
+        const client = new Appwrite.Client().setEndpoint(cfg.ENDPOINT).setProject(cfg.PROJECT_ID);
+        const account = new Appwrite.Account(client);
+        const databases = new Appwrite.Databases(client);
+
+        let currentUser = null;
+        let currentTier = 'starter';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                currentUser = await account.get();
+                document.getElementById('navLoginBtn').innerText = 'Dashboard';
+                const prefs = await account.getPrefs();
+                currentTier = (prefs && prefs.tier) ? prefs.tier : 'starter';
+                
+                // Show current tier
+                const ind = document.getElementById(`ind-${currentTier}`);
+                if (ind) ind.style.display = 'block';
+            } catch(e) {
+                // Not logged in
+            }
+        });
+
+        // Live theme-preview "experience" — works with no login required.
+        function setPreviewTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('snapnexus_theme_preview', theme); } catch (e) {}
+            document.querySelectorAll('#vibePickerGrid .theme-swatch').forEach(el => {
+                el.classList.toggle('active', el.dataset.theme === theme);
+            });
+        }
+        (function initVibePicker() {
+            let current = 'default';
+            try { current = localStorage.getItem('snapnexus_theme_preview') || 'default'; } catch (e) {}
+            document.querySelectorAll('#vibePickerGrid .theme-swatch').forEach(swatch => {
+                if (swatch.dataset.theme === current) swatch.classList.add('active');
+                swatch.addEventListener('click', () => setPreviewTheme(swatch.dataset.theme));
+            });
+        })();
+
+        function launchDemo() {
+            const demoId = "demo_" + Math.random().toString(36).substring(2, 8);
+            window.location.href = `tv.html?event=${demoId}&isDemo=true`;
+        }
+
+        async function handlePlan(planId) {
+            if (!currentUser) {
+                window.location.href = `login.html?plan=${planId}`;
+                return;
+            }
+
+            if (planId === 'starter') {
+                window.location.href = `login.html`;
+                return;
+            }
+            
+            if (currentTier === planId) {
+                alert('You are already on this plan!');
+                window.location.href = `login.html`;
+                return;
+            }
+
+            const planMap = {
+                'pro': { amount: 499, name: 'Pro Plan' },
+                'premium': { amount: 999, name: 'Premium Plan' },
+                'vip': { amount: 2999, name: 'VIP Plan' }
+            };
+
+            const planDetails = planMap[planId];
+            if (!planDetails) return;
+
+            const options = {
+                key: 'rzp_test_Sf5GBrljv03Pmk',
+                amount: planDetails.amount * 100,
+                currency: 'INR',
+                name: 'SnapNexus',
+                description: `Upgrade to ${planDetails.name}`,
+                handler: async function (response) {
+                    const subExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                    await account.updatePrefs({ tier: planId, subExpiry: subExpiry });
+                    
+                    try {
+                        const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                            Appwrite.Query.equal('hostEmail', currentUser.email),
+                            Appwrite.Query.equal('status', 'active')
+                        ]);
+                        for (let doc of res.documents) {
+                            await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { tier: planId });
+                        }
+                    } catch(e) { console.error('Failed to sync events', e); }
+                    
+                    alert(`Payment Successful! You are now on the ${planDetails.name}.`);
+                    window.location.href = 'login.html';
+                }
+            };
+            new window.Razorpay(options).open();
+        }
+    </script>
+</body>
+</html>

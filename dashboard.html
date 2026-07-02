@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Host Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ---------- Theme tokens (mirrors app.html / tv.html) ---------- */
+        :root {
+            /* Brand font is fixed — never overridden by a theme block. */
+            --font-brand: 'Syne', sans-serif;
+        }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --bg-solid: #020617;
+            --surface-bg: rgba(30, 41, 59, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.35);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+            --radius-card: 24px;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --bg-solid: #fdf6f2;
+            --surface-bg: rgba(255, 255, 255, 0.85);
+            --surface-border: rgba(196, 154, 108, 0.4);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-soft: rgba(201, 160, 99, 0.35);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+            --radius-card: 30px;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --bg-solid: #020203;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.14);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.35);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-card: 14px;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --bg-solid: #070110;
+            --surface-bg: rgba(20, 4, 32, 0.75);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-soft: rgba(0, 240, 255, 0.45);
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+            --radius-card: 20px;
+        }
+
+        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); padding: 20px; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+
+        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap, grain) */
+        [data-theme="corporate"] .liquid-mesh {
+            background:
+                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
+                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
+                #020203;
+            animation: none;
+        }
+        [data-theme="corporate"] .liquid-mesh::before {
+            content: '';
+            position: absolute;
+            top: 6%; left: -10%;
+            width: 78%; height: 80%;
+            background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
+            filter: blur(45px);
+            animation: corporateBlobMorph 26s ease-in-out infinite alternate;
+        }
+        [data-theme="corporate"] .liquid-mesh::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwICAwIDAgMCAwLjEyIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCglMjNuKSIvPjwvc3ZnPg==");
+            background-size: 220px 220px;
+            background-repeat: repeat;
+            mix-blend-mode: overlay;
+            opacity: 0.55;
+        }
+        @keyframes corporateBlobMorph {
+            0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
+            50%  { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); }
+            100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
+        }
+
+        .container { max-width: 900px; margin: 40px auto; background: var(--surface-bg); backdrop-filter: blur(16px); border: 1px solid var(--surface-border); border-radius: var(--radius-card); padding: 40px; position: relative; z-index: 10; transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease; }
+        h1 { font-family: var(--font-heading); font-size: 2.5rem; margin-bottom: 10px; }
+        .meta-tags { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+        .badge { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; }
+        .badge.vip { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge.pro { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        
+        .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .btn { padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; font-family: inherit; font-size: 1rem; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-blue { background: #3b82f6; color: white; }
+        .btn-blue:hover:not(:disabled) { background: #2563eb; }
+        .btn-dark { background: rgba(15, 23, 42, 0.8); color: white; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-dark:hover:not(:disabled) { background: rgba(30, 41, 59, 1); }
+        .btn-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Theme Picker */
+        .theme-picker-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 40px; }
+        .theme-swatch { cursor: pointer; border-radius: 16px; padding: 16px; border: 2px solid var(--surface-border); transition: 0.2s; position: relative; background: var(--surface-bg); }
+        .theme-swatch:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .theme-swatch.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .theme-swatch-preview { height: 56px; border-radius: 10px; margin-bottom: 10px; }
+        .theme-swatch-label { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--text-primary); }
+        .theme-swatch-check { display: none; color: var(--accent); }
+        .theme-swatch.active .theme-swatch-check { display: inline-flex; }
+        .theme-save-status { font-size: 0.85rem; color: #10b981; margin-top: 10px; height: 1.2em; opacity: 0; transition: opacity 0.3s ease; }
+        .theme-save-status.show { opacity: 1; }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .lucide-spin { animation: spin 1s linear infinite; }
+        
+        /* Receipt Popup */
+        #receiptPopup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .receipt-card { background: white; color: black; border-radius: 12px; padding: 40px; width: 90%; max-width: 400px; text-align: center; }
+        .receipt-card h2 { font-family: 'Syne'; margin-bottom: 20px; font-size: 1.8rem; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #receiptPopup, #receiptPopup * { visibility: visible; }
+            #receiptPopup { position: absolute; left: 0; top: 0; background: white; color: black; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+    <div class="container" id="mainContainer">
+        <a href="login.html" style="color: #94a3b8; text-decoration: none; margin-bottom: 20px; display: inline-block;">&larr; Back to Events</a>
+        <h1 id="dashEventName">Loading...</h1>
+        <div class="meta-tags">
+            <span class="badge" id="dashEventId">ID: Loading</span>
+            <span class="badge" id="dashEventTier">Tier: Loading</span>
+            <span class="badge" id="dashEventStatus">Status: Loading</span>
+        </div>
+        
+        <div class="grid-buttons" id="mainActionButtons">
+            <button class="btn btn-blue" id="openTvBtn"><i data-lucide="monitor"></i> Open TV Display</button>
+            <button class="btn btn-dark" id="openQrBtn"><i data-lucide="smartphone"></i> Copy Guest Link</button>
+            <button class="btn btn-gold" id="upgradeBtn" style="display: none;"><i data-lucide="zap"></i> Upgrade Plan</button>
+            <button class="btn btn-red" id="endEventBtn"><i data-lucide="power"></i> End Event</button>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <h3 style="font-family: 'Syne'; font-size: 1.4rem; margin-bottom: 4px;">Gallery Theme</h3>
+            <p style="color: #94a3b8; font-size: 0.95rem;">Pick a look for the guest upload page and TV wall. Updates live for everyone viewing the event.</p>
+        </div>
+        <div class="theme-picker-grid" id="themePickerGrid">
+            <div class="theme-swatch" data-theme="default">
+                <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #020617, #3b82f6);"></div>
+                <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Default</div>
+            </div>
+            <div class="theme-swatch" data-theme="wedding">
+                <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #fff7f3, #f6c9d0, #c9a063);"></div>
+                <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Wedding</div>
+            </div>
+            <div class="theme-swatch" data-theme="corporate">
+                <div class="theme-swatch-preview" style="background: radial-gradient(ellipse 70% 65% at 30% 55%, #f3fa7a 0%, #d9a01f 30%, #b16d02 55%, transparent 80%), radial-gradient(ellipse 60% 50% at 15% 10%, rgba(10,69,112,0.7), transparent 65%), #020203;"></div>
+                <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Corporate</div>
+            </div>
+            <div class="theme-swatch" data-theme="party">
+                <div class="theme-swatch-preview" style="background: linear-gradient(135deg, #070110, #5b0fb5, #ff00c8);"></div>
+                <div class="theme-swatch-label"><i data-lucide="check-circle" class="theme-swatch-check"></i> Party</div>
+            </div>
+        </div>
+        <p class="theme-save-status" id="themeSaveStatus">Theme saved!</p>
+
+        <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h3 style="font-family: 'Syne'; font-size: 1.4rem;">Data Retention & Export</h3>
+                    <p id="downloadStatusText" style="color: #94a3b8; font-size: 0.95rem; margin-top: 5px;">Download all photos as a ZIP file.</p>
+                </div>
+                <button class="btn btn-blue" id="downloadZipBtn"><i data-lucide="download"></i> Download Gallery (ZIP)</button>
+            </div>
+            <div id="upsellText" style="display: none; margin-top: 15px; color: #ef4444; font-weight: 600; font-size: 0.9rem;">
+                <!-- Dynamically populated if expired on free tier -->
+            </div>
+        </div>
+        
+        <div id="hostGalleryContainer" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-family: 'Syne'; margin: 0; font-size: 1.8rem;">Live Gallery</h2>
+                <button class="btn btn-dark" id="refreshGalleryBtn" style="padding: 10px 15px; font-size: 0.9rem;"><i data-lucide="refresh-cw"></i> Refresh</button>
+            </div>
+            <div id="hostGallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgradeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px);">
+        <div style="background: rgba(30, 41, 59, 1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; width: 90%; max-width: 500px; position: relative;">
+            <button id="closeModalBtn" style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #fff; cursor: pointer;"><i data-lucide="x"></i></button>
+            <h2 style="font-family: 'Syne'; font-size: 2rem; margin-bottom: 20px; text-align: center;">Upgrade Plan</h2>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;" id="selectProBtn" onmouseover="this.style.background='rgba(59, 130, 246, 0.1)';this.style.borderColor='#3b82f6'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <h3 style="color: #60a5fa; margin-bottom: 8px;">Pro Plan — ₹499</h3>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">Removes Ads, Unlocks 30-day retention.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;" id="selectPremiumBtn" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)';this.style.borderColor='#10b981'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <h3 style="color: #10b981; margin-bottom: 8px;">Premium Plan — ₹999</h3>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">High-res downloads, Priority Queue.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s;" id="selectVipBtn" onmouseover="this.style.background='rgba(245, 158, 11, 0.1)';this.style.borderColor='#fbbf24'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <h3 style="color: #fbbf24; margin-bottom: 8px;"><i data-lucide="crown" style="width: 18px; display: inline-block; vertical-align: middle;"></i> VIP Plan — ₹2999</h3>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">Ad-free, Unlimited Concurrent Events, Custom Logo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Popup -->
+    <div id="receiptPopup">
+        <div class="receipt-card">
+            <h2>SnapNexus Receipt</h2>
+            <div style="text-align: left; margin-bottom: 20px; font-size: 1.1rem; line-height: 1.8;">
+                <p><strong>Date:</strong> <span id="rDate"></span></p>
+                <p><strong>Plan Name:</strong> <span id="rPlan"></span></p>
+                <p><strong>Amount Paid:</strong> <span id="rAmount"></span></p>
+                <p><strong>Transaction ID:</strong> <span id="rTxn"></span></p>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;" class="no-print">
+                <button class="btn btn-blue" onclick="window.print()" style="padding: 10px 20px;"><i data-lucide="printer"></i> Print</button>
+                <button class="btn btn-dark" id="closeReceiptBtn" style="padding: 10px 20px;">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        
+        if (!eventId) {
+            window.location.href = 'login.html';
+            throw new Error("No Event ID - Redirecting");
+        }
+
+        let currentEvent = null;
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme || 'default');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            
+            let userPrefs = null;
+            try { 
+                await account.get(); 
+                userPrefs = await account.getPrefs();
+            } catch(e) { 
+                window.location.href = 'login.html'; 
+                throw new Error("User Not Logged In"); 
+            }
+
+            // 1. Strict Tier Checks & VIP Bouncer
+            if (userPrefs && userPrefs.tier === 'vip') {
+                window.location.href = `vip_dashboard.html?event=${eventId}`;
+                throw new Error("Redirecting VIP user");
+            }
+
+            try {
+                const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [ Appwrite.Query.equal('eventId', eventId) ]);
+                if (res.documents.length === 0) throw new Error("Not Found");
+                currentEvent = res.documents[0];
+                applyTheme(currentEvent.theme);
+
+                // Enforce Subscriptions and Buffer rules locally
+                if (userPrefs && userPrefs.subExpiry) {
+                    const now = Date.now();
+                    const bufferMs = 3 * 3600000;
+                    if (userPrefs.tier === 'pro' || userPrefs.tier === 'premium') {
+                        if (now > userPrefs.subExpiry && currentEvent.status !== 'ended') {
+                            await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { status: 'ended' });
+                            currentEvent.status = 'ended';
+                            alert("Subscription ended. Your event has ended, but you have a 3-hour buffer to download files.");
+                        }
+                        if (now > userPrefs.subExpiry + bufferMs && currentEvent.tier !== 'starter') {
+                            await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { tier: 'starter' });
+                            await account.updatePrefs({ tier: 'starter', subExpiry: null });
+                            currentEvent.tier = 'starter';
+                            userPrefs.tier = 'starter';
+                            window.location.reload();
+                        }
+                    } else if (userPrefs.tier === 'vip') {
+                        if (now > userPrefs.subExpiry && currentEvent.tier === 'vip') {
+                            await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { tier: 'starter' });
+                            await account.updatePrefs({ tier: 'starter', subExpiry: null });
+                            currentEvent.tier = 'starter';
+                            userPrefs.tier = 'starter';
+                        }
+                    }
+                }
+
+                document.getElementById('dashEventName').innerText = currentEvent.eventName;
+                document.getElementById('dashEventId').innerText = "ID: " + currentEvent.eventId;
+                
+                const tierBadge = document.getElementById('dashEventTier');
+                tierBadge.innerText = "Tier: " + currentEvent.tier.toUpperCase();
+                if(currentEvent.tier === 'vip') tierBadge.classList.add('vip');
+                if(currentEvent.tier === 'pro' || currentEvent.tier === 'premium') tierBadge.classList.add('pro');
+                
+                const statusBadge = document.getElementById('dashEventStatus');
+                statusBadge.innerText = "Status: " + currentEvent.status.toUpperCase();
+                if (currentEvent.status === 'ended') {
+                    statusBadge.style.color = '#ef4444';
+                    statusBadge.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                    document.getElementById('endEventBtn').style.display = 'none';
+                    document.getElementById('openQrBtn').style.display = 'none';
+                }
+
+                // 4. Data Retention Timers
+                const downloadBtn = document.getElementById('downloadZipBtn');
+                const upsellText = document.getElementById('upsellText');
+                
+                if (currentEvent.tier === 'starter') {
+                    const eventAgeMs = Date.now() - new Date(currentEvent.$createdAt).getTime();
+                    const hours24 = 24 * 60 * 60 * 1000;
+                    if (eventAgeMs > hours24) {
+                        downloadBtn.disabled = true;
+                        downloadBtn.innerHTML = '<i data-lucide="lock"></i> Gallery Expired';
+                        upsellText.style.display = 'block';
+                        upsellText.style.color = '#ef4444';
+                        upsellText.innerText = "Downloads expire in 24 hours on the Free plan. Upgrade to Pro (₹499) to unlock 30-day gallery retention!";
+                        lucide.createIcons();
+                    }
+                } else if ((currentEvent.tier === 'pro' || currentEvent.tier === 'premium') && userPrefs.subExpiry) {
+                    const now = Date.now();
+                    if (now > userPrefs.subExpiry) {
+                        const timeLeftMs = (userPrefs.subExpiry + 3 * 3600000) - now;
+                        if (timeLeftMs > 0) {
+                            const minsLeft = Math.floor(timeLeftMs / 60000);
+                            const hoursLeft = Math.floor(minsLeft / 60);
+                            const disp = hoursLeft > 0 ? `${hoursLeft}h ${minsLeft%60}m` : `${minsLeft} minutes`;
+                            upsellText.style.display = 'block';
+                            upsellText.style.color = '#f59e0b';
+                            upsellText.innerText = `Subscription Expired. Event ended automatically. You have ${disp} left to download your gallery before files are locked.`;
+                        }
+                    }
+                }
+                
+                downloadBtn.addEventListener('click', () => {
+                    if (currentEvent.tier === 'starter' && (Date.now() - new Date(currentEvent.$createdAt).getTime() > 24*60*60*1000)) {
+                        alert("Gallery expired on Free plan.");
+                        return;
+                    }
+                    alert("Preparing ZIP! (simulated download logic)");
+                });
+
+                // Theme Picker
+                const themePickerGrid = document.getElementById('themePickerGrid');
+                const themeSaveStatus = document.getElementById('themeSaveStatus');
+                const setActiveSwatch = (theme) => {
+                    document.querySelectorAll('.theme-swatch').forEach(el => {
+                        el.classList.toggle('active', el.dataset.theme === (theme || 'default'));
+                    });
+                };
+                setActiveSwatch(currentEvent.theme);
+                themePickerGrid.querySelectorAll('.theme-swatch').forEach(swatch => {
+                    swatch.addEventListener('click', async () => {
+                        const theme = swatch.dataset.theme;
+                        setActiveSwatch(theme);
+                        applyTheme(theme);
+                        try {
+                            await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { theme });
+                            currentEvent.theme = theme;
+                            themeSaveStatus.classList.add('show');
+                            setTimeout(() => themeSaveStatus.classList.remove('show'), 2000);
+                        } catch (err) {
+                            console.error('Theme save error', err);
+                            setActiveSwatch(currentEvent.theme);
+                            applyTheme(currentEvent.theme);
+                            alert("Couldn't save theme. (Does the EventsTable collection have a 'theme' attribute?)");
+                        }
+                    });
+                });
+
+                document.getElementById('openTvBtn').addEventListener('click', () => {
+                    window.open(`tv.html?event=${currentEvent.eventId}`, '_blank');
+                });
+
+                document.getElementById('openQrBtn').addEventListener('click', () => {
+                    navigator.clipboard.writeText(cfg.resolveUrl(`app.html?event=${currentEvent.eventId}`)).then(() => alert("Guest Link Copied!"));
+                });
+
+                const upgradeBtn = document.getElementById('upgradeBtn');
+                const upgradeModal = document.getElementById('upgradeModal');
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                const selectProBtn = document.getElementById('selectProBtn');
+                const selectPremiumBtn = document.getElementById('selectPremiumBtn');
+                const selectVipBtn = document.getElementById('selectVipBtn');
+
+                if (currentEvent.tier !== 'vip') {
+                    upgradeBtn.style.display = 'flex';
+                    upgradeBtn.addEventListener('click', () => { upgradeModal.style.display = 'flex'; lucide.createIcons(); });
+                    closeModalBtn.addEventListener('click', () => { upgradeModal.style.display = 'none'; });
+
+                    const handleCheckout = (amount, planName, tierId) => {
+                        if (!confirm("By proceeding with this payment, you agree to our Privacy Policy and Terms of Service.")) {
+                            return;
+                        }
+
+                        // OTP Verification Simulation
+                        const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
+                        alert(`[OTP SYSTEM] An OTP has been sent to your email for verification.\\n\\nFor this demo, your OTP is: ${mockOtp}`);
+                        const userOtp = prompt(`Enter the 6-digit OTP sent to your email to proceed to payment:`);
+                        if (userOtp !== mockOtp) {
+                            alert('Invalid OTP. Verification failed.');
+                            return;
+                        }
+
+                        // Mock Email Logic
+                        const sendReceiptEmail = (planName, amount) => {
+                            console.log(`Sending receipt email via sooperfast.net@yahoo.com...`);
+                            setTimeout(() => {
+                                alert(`Receipt for ${planName} (₹${amount}) was mailed securely from sooperfast.net@yahoo.com.`);
+                            }, 500);
+                        };
+
+                        const options = {
+                            key: 'rzp_test_Sf5GBrljv03Pmk',
+                            amount: amount * 100,
+                            currency: 'INR', 
+                            name: 'SnapNexus', 
+                            description: `Upgrade to ${planName}`,
+                            handler: async function (response) {
+                                // 5. VIP Subscription Engine updates
+                                const subExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+                                await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { tier: tierId });
+                                await account.updatePrefs({ tier: tierId, subExpiry: subExpiry });
+                                
+                                upgradeModal.style.display = 'none';
+                                
+                                // Show Receipt
+                                document.getElementById('rDate').innerText = new Date().toLocaleString();
+                                document.getElementById('rPlan').innerText = planName;
+                                document.getElementById('rAmount').innerText = "₹" + amount;
+                                document.getElementById('rTxn').innerText = response.razorpay_payment_id || "TXN_" + Math.random().toString(36).substr(2,9).toUpperCase();
+                                
+                                sendReceiptEmail(planName, amount);
+
+                                const popup = document.getElementById('receiptPopup');
+                                popup.style.display = 'flex';
+                            }
+                        };
+                        upgradeModal.style.display = 'none';
+                        new window.Razorpay(options).open();
+                    };
+
+                    if (currentEvent.tier === 'premium') {
+                        selectProBtn.style.display = 'none';
+                        selectPremiumBtn.style.display = 'none';
+                    } else if (currentEvent.tier === 'pro') {
+                        selectProBtn.style.display = 'none';
+                        selectPremiumBtn.addEventListener('click', () => handleCheckout(999, 'Premium Plan', 'premium'));
+                    } else {
+                        selectProBtn.addEventListener('click', () => handleCheckout(499, 'Pro Plan', 'pro'));
+                        selectPremiumBtn.addEventListener('click', () => handleCheckout(999, 'Premium Plan', 'premium'));
+                    }
+                    selectVipBtn.addEventListener('click', () => handleCheckout(2999, 'VIP Plan', 'vip'));
+                }
+                
+                document.getElementById('closeReceiptBtn').addEventListener('click', () => {
+                    window.location.reload();
+                });
+
+                document.getElementById('endEventBtn').addEventListener('click', async () => {
+                    if(confirm("End event? Guests can no longer upload.")) {
+                        await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, currentEvent.$id, { status: 'ended' });
+                        window.location.reload();
+                    }
+                });
+
+                // Live Image Gallery
+                const hostGalleryContainer = document.getElementById('hostGalleryContainer');
+                const hostGallery = document.getElementById('hostGallery');
+                hostGalleryContainer.style.display = 'block';
+
+                const fetchAndRenderGallery = async () => {
+                    try {
+                        const res = await storage.listFiles(cfg.BUCKET_ID, [
+                            Appwrite.Query.startsWith('name', currentEvent.eventId + '_'),
+                            Appwrite.Query.orderDesc('$createdAt'),
+                            Appwrite.Query.limit(50)
+                        ]);
+                        hostGallery.innerHTML = res.files.map(f => {
+                            const url = storage.getFileView(cfg.BUCKET_ID, f.$id).href;
+                            const isVideo = (f.mimeType || '').startsWith('video/');
+                            const media = isVideo
+                                ? `<video src="${url}" muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;" onmouseover="this.play()" onmouseout="this.pause()"></video>`
+                                : `<img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                            return `<div style="border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); aspect-ratio: 1; background: #000;">
+                                        ${media}
+                                    </div>`;
+                        }).join('');
+                        if (res.files.length === 0) {
+                            hostGallery.innerHTML = '<p style="color: #94a3b8; grid-column: 1 / -1;">No photos have been uploaded yet.</p>';
+                        }
+                    } catch (err) { console.error('Gallery fetch error', err); }
+                };
+
+                document.getElementById('refreshGalleryBtn').addEventListener('click', () => {
+                    const icon = document.querySelector('#refreshGalleryBtn i');
+                    icon.classList.add('lucide-spin');
+                    fetchAndRenderGallery().finally(() => { setTimeout(() => icon.classList.remove('lucide-spin'), 500); });
+                });
+
+                fetchAndRenderGallery();
+                setInterval(fetchAndRenderGallery, 15000);
+
+            } catch (err) { 
+                alert("Event not found or failed to load. Redirecting to Login.");
+                window.location.href = 'login.html';
+                console.error(err); 
+            }
+        });
+    </script>
+</body>
+</html>

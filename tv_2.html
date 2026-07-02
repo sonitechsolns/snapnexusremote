@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="/config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | VIP Live TV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:wght@400;600;800&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        /* ---------- Theme tokens ---------- */
+        :root {
+            /* Brand font is fixed — never overridden by a theme block. */
+            --font-brand: 'Syne', sans-serif;
+        }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --surface-bg: rgba(0, 0, 0, 0.6);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #bfdbfe;
+            --accent: #3b82f6;
+            --accent-strong: #fbbf24;
+            --accent-soft: rgba(59, 130, 246, 0.35);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --surface-bg: rgba(255, 255, 255, 0.5);
+            --surface-border: rgba(196, 154, 108, 0.4);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-strong: #a9824f;
+            --accent-soft: rgba(201, 160, 99, 0.35);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.14);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.35);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --surface-bg: rgba(20, 4, 32, 0.6);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-strong: #ff00c8;
+            --accent-soft: rgba(0, 240, 255, 0.45);
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', sans-serif;
+        }
+
+        body { font-family: var(--font-body); background: #000; color: var(--text-primary); overflow:hidden; height:100vh; width:100vw; position: relative; transition: color 0.4s ease; }
+
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+
+        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap, grain) */
+        [data-theme="corporate"] .liquid-mesh {
+            background:
+                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
+                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
+                #020203;
+            animation: none;
+        }
+        [data-theme="corporate"] .liquid-mesh::before {
+            content: '';
+            position: absolute;
+            top: 6%; left: -10%;
+            width: 78%; height: 80%;
+            background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
+            filter: blur(45px);
+            animation: corporateBlobMorph 26s ease-in-out infinite alternate;
+        }
+        [data-theme="corporate"] .liquid-mesh::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwICAwIDAgMCAwLjEyIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCglMjNuKSIvPjwvc3ZnPg==");
+            background-size: 220px 220px;
+            background-repeat: repeat;
+            mix-blend-mode: overlay;
+            opacity: 0.55;
+        }
+        @keyframes corporateBlobMorph {
+            0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
+            50%  { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); }
+            100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
+        }
+
+        .slideshow-container { width: 100vw; height: 100vh; position: absolute; top:0; left:0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); z-index: 1; }
+        .photo-layer { position: absolute; max-width: 95%; max-height: 95%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .photo-layer.active { opacity: 1; }
+        .photo-layer img, .photo-layer video { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), 0 0 50px var(--accent-soft); }
+
+        /* Collapsible Sidebar for VIP */
+        .sidebar { position: absolute; left: 0; top: 0; width: 300px; height: 100vh; background: var(--surface-bg); backdrop-filter: blur(10px); padding: 40px 20px; display: flex; flex-direction: column; align-items: center; z-index: 10; transition: transform 0.4s ease, background 0.4s ease, border-color 0.4s ease; border-right: 1px solid var(--surface-border); }
+        .sidebar.collapsed { transform: translateX(-100%); }
+        .sidebar h1 { font-family: var(--font-heading); font-size: 2rem; margin-bottom: 20px; text-align: center; color: var(--text-primary); }
+        .qr-placeholder { width: 200px; height: 200px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 0 25px var(--accent-soft); }
+
+        .controls { position: absolute; top: 20px; right: 20px; z-index: 20; display: flex; gap: 10px; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px); display: flex; align-items: center; gap: 5px; }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .custom-watermark { position: absolute; bottom: 40px; right: 50px; max-height: 120px; max-width: 250px; object-fit: contain; z-index: 15; opacity: 0.85; filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.8)); }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+
+    <div class="sidebar" id="sidebar">
+        <h1 id="tvEventName">VIP Event</h1>
+        <p style="margin-bottom: 10px; color: var(--text-secondary);">Scan to join!</p>
+        <div class="qr-placeholder">
+            <img id="qrImage" src="" style="width: 100%; border-radius: 10px;">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" id="collapseSidebarBtn"><i data-lucide="layout-panel-left"></i> Toggle QR</button>
+        <button class="ctrl-btn" id="fullscreenBtn"><i data-lucide="maximize"></i> Fullscreen</button>
+    </div>
+
+    <div class="slideshow-container">
+        <div id="layer1" class="photo-layer"></div>
+        <div id="layer2" class="photo-layer"></div>
+    </div>
+
+    <img id="vipLogo" class="custom-watermark" src="" style="display: none;">
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+        if (!eventId) { document.body.innerHTML = '<h1 style="color:white; text-align:center; padding-top:20vh;">Invalid TV Link</h1>'; throw new Error("Halt"); }
+
+        document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(cfg.resolveUrl(`app.html?event=${eventId}`))}`;
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme || 'default');
+        }
+
+        function renderLayer(el, item) {
+            if (!item) { el.innerHTML = ''; return; }
+            if (item.type === 'video') {
+                el.innerHTML = `<video src="${item.url}" autoplay muted loop playsinline></video>`;
+            } else {
+                el.innerHTML = `<img src="${item.url}" alt="">`;
+            }
+        }
+
+        let photos = [];
+        let currentIndex = 0;
+        let activeLayer = 1;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            const layer1 = document.getElementById('layer1');
+            const layer2 = document.getElementById('layer2');
+
+            try {
+                const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [ Appwrite.Query.equal('eventId', eventId) ]);
+                if (res.documents.length > 0) {
+                    const doc = res.documents[0];
+                    document.getElementById('tvEventName').innerText = doc.eventName;
+                    applyTheme(doc.theme);
+                    if (doc.customWatermark) {
+                        const logoEl = document.getElementById('vipLogo');
+                        logoEl.src = doc.customWatermark;
+                        logoEl.style.display = 'block';
+                    }
+                }
+            } catch(e) { console.error(e); }
+
+            async function fetchPhotos() {
+                try {
+                    const res = await storage.listFiles(cfg.BUCKET_ID, [
+                        Appwrite.Query.startsWith('name', eventId + '_'), Appwrite.Query.limit(100), Appwrite.Query.orderDesc('$createdAt')
+                    ]);
+                    const newItems = res.files.map(f => ({
+                        url: storage.getFileView(cfg.BUCKET_ID, f.$id).href,
+                        type: (f.mimeType || '').startsWith('video/') ? 'video' : 'image'
+                    }));
+                    if (JSON.stringify(newItems) !== JSON.stringify(photos)) {
+                        photos = newItems;
+                        if (photos.length > 0 && !layer1.classList.contains('active') && !layer2.classList.contains('active')) {
+                            renderLayer(layer1, photos[0]);
+                            layer1.classList.add('active');
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            function nextSlide() {
+                if (photos.length === 0) return;
+                currentIndex = (currentIndex + 1) % photos.length;
+                const nextItem = photos[currentIndex];
+                if (activeLayer === 1) { renderLayer(layer2, nextItem); layer2.classList.add('active'); layer1.classList.remove('active'); activeLayer = 2; }
+                else { renderLayer(layer1, nextItem); layer1.classList.add('active'); layer2.classList.remove('active'); activeLayer = 1; }
+            }
+
+            const sidebar = document.getElementById('sidebar');
+            document.getElementById('collapseSidebarBtn').addEventListener('click', () => { sidebar.classList.toggle('collapsed'); });
+
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                    fullscreenBtn.innerHTML='<i data-lucide="minimize"></i> Exit Fullscreen';
+                    sidebar.classList.add('collapsed');
+                }
+                else {
+                    document.exitFullscreen();
+                    fullscreenBtn.innerHTML='<i data-lucide="maximize"></i> Fullscreen';
+                    sidebar.classList.remove('collapsed');
+                }
+                lucide.createIcons();
+            });
+
+            fetchPhotos(); setInterval(fetchPhotos, 1500); setInterval(nextSlide, 4000);
+
+            async function checkEventStatus() {
+                try {
+                    const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [ Appwrite.Query.equal('eventId', eventId) ]);
+                    if (res.documents.length > 0 && res.documents[0].status === 'ended') {
+                        document.body.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; width:100vw; background:#000; z-index:9999; position:absolute; top:0; left:0;"><h1 style="font-size: 4rem; color: #fbbf24; font-family:\'Syne\';">Event Ended</h1></div>';
+                    } else if (res.documents.length > 0) {
+                        applyTheme(res.documents[0].theme);
+                    }
+                } catch(e) {}
+            }
+            setInterval(checkEventStatus, 5000);
+        });
+    </script>
+</body>
+</html>
