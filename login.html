@@ -8,13 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="/config.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnapNexus | Host Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        // Carry over the vibe chosen on the homepage preview, if any.
         (function () {
             try {
                 var t = localStorage.getItem('snapnexus_theme_preview') || 'default';
@@ -22,14 +18,15 @@
             } catch (e) {}
         })();
     </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Host Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* ---------- Theme tokens (mirrors index.html / app.html) ---------- */
-        :root {
-            /* Brand font is fixed — never overridden by a theme block. */
-            --font-brand: 'Syne', sans-serif;
-        }
+        /* ---------- Theme tokens ---------- */
+        :root { --font-brand: 'Syne', sans-serif; }
         :root,
         [data-theme="default"] {
             --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
@@ -40,6 +37,7 @@
             --text-secondary: #94a3b8;
             --accent: #3b82f6;
             --accent-strong: #2563eb;
+            --accent-soft: rgba(59, 130, 246, 0.2);
             --font-heading: 'Syne', sans-serif;
             --font-body: 'Urbanist', sans-serif;
             --radius-card: 24px;
@@ -53,6 +51,7 @@
             --text-secondary: #8a6a64;
             --accent: #c9a063;
             --accent-strong: #a9824f;
+            --accent-soft: rgba(201, 160, 99, 0.2);
             --font-heading: 'Playfair Display', serif;
             --font-body: 'Lora', serif;
             --radius-card: 30px;
@@ -66,6 +65,7 @@
             --text-secondary: #d4d4d8;
             --accent: #ffc83d;
             --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.2);
             --font-heading: 'Inter', sans-serif;
             --font-body: 'Inter', sans-serif;
             --radius-card: 14px;
@@ -79,43 +79,50 @@
             --text-secondary: #c4b5fd;
             --accent: #00f0ff;
             --accent-strong: #ff00c8;
+            --accent-soft: rgba(0, 240, 255, 0.2);
             --font-heading: 'Urbanist', sans-serif;
             --font-body: 'Urbanist', sans-serif;
             --radius-card: 20px;
         }
 
-        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-solid);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
 
-        /* Continuous Background Animation */
-        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        /* Background */
+        .liquid-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3;
+            background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d));
+            background-size: 200% 200%;
+            animation: liquidShift 16s ease infinite alternate;
+            transition: background 0.6s ease;
+        }
         @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
 
-        /* Corporate theme: Aurora Mesh Gradient — single organic blob (cream/gold/amber core, blue rim wrap, grain) */
         [data-theme="corporate"] .liquid-mesh {
-            background:
-                radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%),
-                radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%),
-                #020203;
+            background: radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%), radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%), #020203;
             animation: none;
         }
         [data-theme="corporate"] .liquid-mesh::before {
-            content: '';
-            position: absolute;
-            top: 6%; left: -10%;
-            width: 78%; height: 80%;
+            content: ''; position: absolute; top: 6%; left: -10%; width: 78%; height: 80%;
             background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%);
-            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%;
-            filter: blur(45px);
+            border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; filter: blur(45px);
             animation: corporateBlobMorph 26s ease-in-out infinite alternate;
         }
         [data-theme="corporate"] .liquid-mesh::after {
-            content: '';
-            position: absolute; inset: 0;
+            content: ''; position: absolute; inset: 0;
             background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwICAwIDAgMCAwLjEyIDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCglMjNuKSIvPjwvc3ZnPg==");
-            background-size: 220px 220px;
-            background-repeat: repeat;
-            mix-blend-mode: overlay;
-            opacity: 0.55;
+            background-size: 220px 220px; background-repeat: repeat; mix-blend-mode: overlay; opacity: 0.55;
         }
         @keyframes corporateBlobMorph {
             0%   { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); }
@@ -123,35 +130,179 @@
             100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); }
         }
 
-        .glass-panel { background: var(--surface-bg); backdrop-filter: blur(16px); border: 1px solid var(--surface-border); border-radius: var(--radius-card); padding: 40px; width: 100%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 10; transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease; }
-        /* Title shows the brand name initially ("SnapNexus Host") — keep it on the fixed brand font */
-        h1 { font-family: var(--font-brand); font-size: 2rem; margin-bottom: 8px; text-align: center; color: var(--text-primary); }
-        p.subtitle { color: var(--text-secondary); text-align: center; margin-bottom: 32px; }
-        .input-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
-        input { width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-family: inherit; font-size: 1rem; transition: all 0.3s ease; }
-        input:focus { outline: none; border-color: var(--accent); background: rgba(15, 23, 42, 0.8); }
-        .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
-        .btn-primary:hover:not(:disabled) { background: var(--accent-strong); transform: translateY(-2px); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
-        .toggle-text { text-align: center; margin-top: 24px; color: var(--text-secondary); cursor: pointer; font-weight: 600; transition: color 0.3s ease; }
-        .toggle-text:hover { color: var(--text-primary); }
-        .history-item { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
-        .history-item:hover { background: rgba(30, 41, 59, 0.8); border-color: var(--accent); }
-        .history-item strong { display: block; font-size: 1.1rem; margin-bottom: 4px; color: white; }
-        .history-item span { font-size: 0.85rem; color: #94a3b8; }
-        .badge { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        /* Floating orbs */
+        .orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(60px); z-index: -2; }
+        .orb-1 { width: 300px; height: 300px; background: var(--accent); opacity: 0.07; top: -80px; right: -60px; }
+        .orb-2 { width: 220px; height: 220px; background: var(--accent-strong); opacity: 0.08; bottom: -60px; left: -40px; }
+        .orb-3 { width: 160px; height: 160px; background: #10b981; opacity: 0.05; top: 50%; right: 10%; }
+
+        /* Glass panel */
+        .glass-panel {
+            background: var(--surface-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--surface-border);
+            border-radius: var(--radius-card);
+            padding: 44px 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,255,255,0.04);
+            z-index: 10;
+            transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease;
+            will-change: transform;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transform: translateY(32px) scale(0.97);
+        }
+
+        /* Logo at top of panel */
+        .panel-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 28px; text-decoration: none; }
+        .panel-logo-img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; box-shadow: 0 0 12px rgba(251,191,36,0.3); background: #fff; }
+        .panel-logo-text { font-family: var(--font-brand); font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, #fde047, #f59e0b, #d97706); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+        h1 { font-family: var(--font-brand); font-size: 1.85rem; margin-bottom: 6px; text-align: center; color: var(--text-primary); letter-spacing: -0.02em; }
+        p.subtitle { color: var(--text-secondary); text-align: center; margin-bottom: 32px; font-size: 0.95rem; }
+
+        .input-group { margin-bottom: 18px; position: relative; }
+        label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 7px; letter-spacing: 0.02em; text-transform: uppercase; }
+
+        input {
+            width: 100%;
+            padding: 13px 16px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            outline: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.25); }
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(15, 23, 42, 0.75);
+            box-shadow: 0 0 0 3px var(--accent-soft), 0 0 20px -4px var(--accent);
+        }
+        [data-theme="wedding"] input { background: rgba(255,255,255,0.6); color: #5c3a3a; }
+        [data-theme="wedding"] input::placeholder { color: rgba(92,58,58,0.35); }
+        [data-theme="wedding"] input:focus { background: rgba(255,255,255,0.85); }
+
+        /* Password toggle */
+        .input-wrapper { position: relative; }
+        .input-wrapper input { padding-right: 44px; }
+        .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; padding: 4px; transition: color 0.2s; }
+        .pw-toggle:hover { color: var(--text-primary); }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(105deg, var(--accent), var(--accent-strong));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.15s, box-shadow 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            box-shadow: 0 6px 20px var(--accent-soft);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+            pointer-events: none;
+        }
+        .btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 10px 28px var(--accent-soft); }
+        .btn-primary:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+        .btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
+
+        /* Ripple on click */
+        .btn-ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); transform: scale(0); animation: rippleAnim 0.55s ease-out forwards; pointer-events: none; }
+        @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+        .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-secondary); font-size: 0.8rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--surface-border); }
+
+        .toggle-text { text-align: center; margin-top: 22px; color: var(--text-secondary); cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: color 0.2s ease; }
+        .toggle-text:hover { color: var(--accent); }
+
+        /* History section */
+        .history-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(-12px);
+        }
+        .history-item:hover { background: rgba(30, 41, 59, 0.75); border-color: var(--accent); transform: translateX(4px); }
+        [data-theme="wedding"] .history-item { background: rgba(255,255,255,0.5); }
+        .history-item strong { display: block; font-size: 1rem; margin-bottom: 4px; color: var(--text-primary); }
+        .history-item span { font-size: 0.82rem; color: var(--text-secondary); }
+        .badge { background: var(--accent-soft); color: var(--accent); padding: 4px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+
         #historySection { display: none; }
-        
+
+        .btn-create {
+            width: 100%; padding: 14px; margin-bottom: 24px;
+            background: linear-gradient(105deg, #10b981, #059669);
+            color: white; border: none; border-radius: 12px;
+            font-weight: 800; font-size: 1rem; font-family: inherit;
+            cursor: pointer; transition: filter 0.2s, transform 0.15s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+        .btn-create:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn-create:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .logout-text { text-align: center; color: #ef4444; cursor: pointer; font-weight: 700; font-size: 0.9rem; margin-top: 24px; transition: opacity 0.2s; }
+        .logout-text:hover { opacity: 0.75; }
+
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .lucide-spin { animation: spin 1s linear infinite; }
+
+        /* Custom cursor */
+        #cursor-dot, #cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%; transform: translate(-50%, -50%); }
+        #cursor-dot { width: 8px; height: 8px; background: var(--accent); }
+        #cursor-ring { width: 34px; height: 34px; border: 2px solid var(--accent); opacity: 0.55; transition: border-color 0.3s, opacity 0.3s, width 0.25s, height 0.25s; }
+        #cursor-ring.hovered { width: 48px; height: 48px; opacity: 0.85; background: var(--accent-soft); }
+        @media (pointer: coarse) { #cursor-dot, #cursor-ring { display: none; } }
     </style>
 </head>
 <body>
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
     <div class="liquid-mesh"></div>
-    <div class="glass-panel">
-        <h1 id="authTitle">SnapNexus Host</h1>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="glass-panel" id="glassPanel">
+        <a class="panel-logo" href="index.html">
+            <img src="SNAPN.png" alt="SnapNexus" class="panel-logo-img" onerror="this.style.display='none'">
+            <span class="panel-logo-text">SnapNexus</span>
+        </a>
+
+        <h1 id="authTitle">Welcome back</h1>
         <p class="subtitle" id="authSubtitle">Sign in to manage your events</p>
+
         <div id="authForm">
             <div class="input-group" id="nameGroup" style="display: none;">
                 <label>Full Name</label>
@@ -159,29 +310,120 @@
             </div>
             <div class="input-group">
                 <label>Email Address</label>
-                <input type="email" id="emailInput" placeholder="host@example.com">
+                <input type="email" id="emailInput" placeholder="host@example.com" autocomplete="email">
             </div>
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" id="passwordInput" placeholder="••••••••">
+                <div class="input-wrapper">
+                    <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password">
+                    <button class="pw-toggle" id="pwToggle" type="button" aria-label="Toggle password visibility">
+                        <i data-lucide="eye" style="width:18px;height:18px;"></i>
+                    </button>
+                </div>
             </div>
             <button class="btn-primary" id="loginBtn">Sign In <i data-lucide="arrow-right"></i></button>
-            <p class="toggle-text" id="toggleAuth">Don't have an account? Create one.</p>
+            <div class="divider">or</div>
+            <p class="toggle-text" id="toggleAuth">Don't have an account? <strong>Create one.</strong></p>
         </div>
+
         <div id="historySection">
-            <button class="btn-primary" id="createNewEventBtn" style="margin-bottom: 24px; background: #10b981;">
+            <button class="btn-create" id="createNewEventBtn">
                 <i data-lucide="plus-circle"></i> Create New Event
             </button>
-            <h3 style="font-family: 'Syne'; margin-bottom: 16px; font-size: 1.2rem;">Previous Events</h3>
+            <h3 style="font-family: var(--font-brand); margin-bottom: 14px; font-size: 1.05rem; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;">Previous Events</h3>
             <div id="historyList"></div>
-            <p class="toggle-text" id="logoutBtn" style="color: #ef4444; margin-top: 30px;">Sign Out</p>
+            <p class="logout-text" id="logoutBtn">Sign Out</p>
         </div>
     </div>
 
     <script>
+        lucide.createIcons();
+
+        // ── Panel entrance ───────────────────────────────────────────────
+        gsap.to('#glassPanel', { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(1.3)', delay: 0.1 });
+
+        // Orb animations
+        gsap.to('.orb-1', { x: 30, y: 20, duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        gsap.to('.orb-2', { x: -20, y: -30, duration: 10, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        gsap.to('.orb-3', { x: 15, y: -20, duration: 7, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+        // ── Panel tilt on mouse move ─────────────────────────────────────
+        (function () {
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+            const panel = document.getElementById('glassPanel');
+            document.addEventListener('mousemove', e => {
+                const rect = panel.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = (e.clientX - cx) / window.innerWidth;
+                const dy = (e.clientY - cy) / window.innerHeight;
+                gsap.to(panel, { rotationX: -dy * 5, rotationY: dx * 5, perspective: 1000, ease: 'power2.out', duration: 0.6 });
+            });
+            document.addEventListener('mouseleave', () => {
+                gsap.to(panel, { rotationX: 0, rotationY: 0, duration: 0.8, ease: 'elastic.out(1, 0.5)' });
+            });
+        })();
+
+        // ── Custom cursor ────────────────────────────────────────────────
+        (function () {
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+            document.body.style.cursor = 'none';
+            const dot = document.getElementById('cursor-dot');
+            const ring = document.getElementById('cursor-ring');
+            let rx = -200, ry = -200, mx = -200, my = -200;
+            document.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                gsap.set(dot, { x: mx, y: my });
+            });
+            (function lerpRing() {
+                rx += (mx - rx) * 0.13;
+                ry += (my - ry) * 0.13;
+                gsap.set(ring, { x: rx, y: ry });
+                requestAnimationFrame(lerpRing);
+            })();
+            document.querySelectorAll('button, input, a, .toggle-text, .logout-text, .history-item').forEach(el => {
+                el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+            });
+        })();
+
+        // ── Password toggle ──────────────────────────────────────────────
+        document.getElementById('pwToggle').addEventListener('click', () => {
+            const input = document.getElementById('passwordInput');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            document.getElementById('pwToggle').innerHTML = `<i data-lucide="${isHidden ? 'eye-off' : 'eye'}" style="width:18px;height:18px;"></i>`;
+            lucide.createIcons();
+        });
+
+        // ── Button ripple ────────────────────────────────────────────────
+        document.querySelectorAll('.btn-primary, .btn-create').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const r = document.createElement('span');
+                r.className = 'btn-ripple';
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
+                this.appendChild(r);
+                setTimeout(() => r.remove(), 600);
+            });
+        });
+
+        // ── Appwrite setup ────────────────────────────────────────────────
+        const cfg = window.SnapNexus;
+        const client = new Appwrite.Client().setEndpoint(cfg.ENDPOINT).setProject(cfg.PROJECT_ID);
+        const account = new Appwrite.Account(client);
+        const databases = new Appwrite.Databases(client);
+
         let isSignup = false;
         let currentUser = null;
         let globalEventHistory = [];
+
+        // ── Enter key on inputs ───────────────────────────────────────────
+        ['emailInput', 'passwordInput', 'nameInput'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+        });
 
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
@@ -191,26 +433,24 @@
 
             async function loadHistory() {
                 try {
-                    historyList.innerHTML = '<p style="color: #94a3b8; text-align: center;"><i data-lucide="loader-2" class="lucide-spin"></i> Loading events...</p>';
+                    historyList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 12px;"><i data-lucide="loader-2" class="lucide-spin"></i> Loading events...</p>';
                     lucide.createIcons();
                     const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
                         Appwrite.Query.equal('hostEmail', currentUser.email),
                         Appwrite.Query.orderDesc('$createdAt')
                     ]);
-                    
                     globalEventHistory = res.documents;
-                    
-                    if(res.documents.length === 0) {
-                        historyList.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">No events found. Create your first one above!</p>';
+
+                    if (res.documents.length === 0) {
+                        historyList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No events yet — create your first one above!</p>';
                         return;
                     }
-                    
+
                     historyList.innerHTML = '';
-                    res.documents.forEach(doc => {
+                    res.documents.forEach((doc, i) => {
                         const div = document.createElement('div');
                         div.className = 'history-item';
-                        const statusColor = doc.status === 'active' ? '#10b981' : '#ef4444'; 
-                        
+                        const statusColor = doc.status === 'active' ? '#10b981' : '#ef4444';
                         div.innerHTML = `
                             <div>
                                 <strong>${doc.eventName}</strong>
@@ -218,27 +458,35 @@
                             </div>
                             <div style="text-align: right;">
                                 <span class="badge" style="margin-bottom: 6px; display: inline-block;">${doc.tier}</span><br>
-                                <span style="font-size: 0.7rem; font-weight: 800; color: ${statusColor}; background: ${statusColor}20; padding: 3px 8px; border-radius: 6px; text-transform: uppercase;">
-                                    ${doc.status}
-                                </span>
-                            </div>
-                        `;
+                                <span style="font-size: 0.7rem; font-weight: 800; color: ${statusColor}; background: ${statusColor}20; padding: 3px 8px; border-radius: 6px; text-transform: uppercase;">${doc.status}</span>
+                            </div>`;
                         div.addEventListener('click', () => { window.location.href = cfg.resolveUrl(`dashboard.html?event=${doc.eventId}`); });
                         historyList.appendChild(div);
+                        // Stagger in
+                        gsap.to(div, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out', delay: i * 0.08 });
                     });
-                } catch(e) { historyList.innerHTML = '<p style="color: #ef4444; text-align: center;">Failed to load history.</p>'; }
+                    lucide.createIcons();
+                } catch(e) {
+                    historyList.innerHTML = '<p style="color: #ef4444; text-align: center;">Failed to load history.</p>';
+                }
+            }
+
+            async function showHistory() {
+                gsap.to(authForm, { opacity: 0, y: -10, duration: 0.3, ease: 'power2.in', onComplete: () => {
+                    authForm.style.display = 'none';
+                    historySection.style.display = 'block';
+                    gsap.fromTo(historySection, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+                }});
             }
 
             async function checkSession() {
                 try {
                     currentUser = await account.get();
-                    
-                    // 5. VIP Subscription Engine - Timer & Tier handling
+
                     let prefs = await account.getPrefs();
                     if (prefs.subExpiry) {
                         const now = Date.now();
-                        const bufferMs = 3 * 3600000; // 3 hours
-                        
+                        const bufferMs = 3 * 3600000;
                         try {
                             if (prefs.tier === 'pro' || prefs.tier === 'premium') {
                                 if (now > prefs.subExpiry) {
@@ -277,10 +525,9 @@
                         } catch(e) { console.error('Subscription expiry update failed', e); }
                     }
 
-                    authForm.style.display = 'none';
-                    historySection.style.display = 'block';
-                    document.getElementById('authTitle').innerText = `Welcome, ${currentUser.name || 'Host'}`;
-                    document.getElementById('authSubtitle').innerText = 'Your event dashboard';
+                    document.getElementById('authTitle').innerText = `Hi, ${currentUser.name ? currentUser.name.split(' ')[0] : 'Host'}`;
+                    document.getElementById('authSubtitle').innerText = 'Your events are ready';
+                    showHistory();
                     loadHistory();
 
                     const planMap = {
@@ -296,33 +543,27 @@
                             return;
                         }
                         const planDetails = planMap[p];
-
-                        // OTP Verification Simulation
                         const mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
-                        alert(`[OTP SYSTEM] An OTP has been sent to ${currentUser.email} for verification.\\n\\nFor this demo, your OTP is: ${mockOtp}`);
+                        alert(`[OTP SYSTEM] An OTP has been sent to ${currentUser.email} for verification.\n\nFor this demo, your OTP is: ${mockOtp}`);
                         const userOtp = prompt(`Enter the 6-digit OTP sent to ${currentUser.email} to proceed to payment:`);
                         if (userOtp !== mockOtp) {
                             alert('Invalid OTP. Verification failed.');
                             window.history.replaceState({}, document.title, 'login.html');
                             return;
                         }
-
-                        // Mock Email Logic
                         const sendReceiptEmail = (email, planName, amount) => {
                             console.log(`Sending receipt email to ${email} via sooperfast.net@yahoo.com...`);
                             alert(`Verification complete! Receipt for ${planName} (₹${amount}) was mailed to ${email} securely from sooperfast.net@yahoo.com.`);
                         };
-
                         const options = {
                             key: 'rzp_test_Sf5GBrljv03Pmk',
                             amount: planDetails.amount * 100,
-                            currency: 'INR', 
-                            name: 'SnapNexus', 
+                            currency: 'INR',
+                            name: 'SnapNexus',
                             description: `Upgrade to ${planDetails.name}`,
                             handler: async function (response) {
                                 const subExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
                                 await account.updatePrefs({ tier: p, subExpiry: subExpiry });
-                                
                                 try {
                                     const res = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
                                         Appwrite.Query.equal('hostEmail', currentUser.email),
@@ -332,41 +573,41 @@
                                         await databases.updateDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, doc.$id, { tier: p });
                                     }
                                 } catch(e) { console.error('Failed to sync events', e); }
-                                
                                 sendReceiptEmail(currentUser.email, planDetails.name, planDetails.amount);
-
                                 alert(`Payment Successful! You are now on the ${planDetails.name}.`);
-                                window.location.href = 'login.html'; // Refresh without params
+                                window.location.href = 'login.html';
                             },
-                            modal: {
-                                ondismiss: function() {
-                                    window.history.replaceState({}, document.title, 'login.html');
-                                }
-                            }
+                            modal: { ondismiss: function() { window.history.replaceState({}, document.title, 'login.html'); } }
                         };
                         new window.Razorpay(options).open();
                     } else if (p) {
                         window.history.replaceState({}, document.title, 'login.html');
                     }
                 } catch(err) {
-                    authForm.style.display = 'block';
-                    historySection.style.display = 'none';
+                    // Not logged in — show form
                 }
             }
 
             document.getElementById('toggleAuth').addEventListener('click', () => {
                 isSignup = !isSignup;
+                gsap.fromTo('#authForm', { opacity: 0.5 }, { opacity: 1, duration: 0.3 });
                 document.getElementById('nameGroup').style.display = isSignup ? 'block' : 'none';
-                document.getElementById('loginBtn').innerHTML = isSignup ? 'Create Account <i data-lucide="user-plus"></i>' : 'Sign In <i data-lucide="arrow-right"></i>';
-                document.getElementById('toggleAuth').innerText = isSignup ? 'Back to Sign In' : "Don't have an account? Create one.";
+                document.getElementById('loginBtn').innerHTML = isSignup
+                    ? 'Create Account <i data-lucide="user-plus"></i>'
+                    : 'Sign In <i data-lucide="arrow-right"></i>';
+                document.getElementById('authTitle').innerText = isSignup ? 'Create account' : 'Welcome back';
+                document.getElementById('authSubtitle').innerText = isSignup ? 'Start hosting in seconds' : 'Sign in to manage your events';
+                document.getElementById('toggleAuth').innerHTML = isSignup
+                    ? 'Already have an account? <strong>Sign in.</strong>'
+                    : "Don't have an account? <strong>Create one.</strong>";
                 lucide.createIcons();
             });
 
             document.getElementById('loginBtn').addEventListener('click', async () => {
-                const email = document.getElementById('emailInput').value;
+                const email = document.getElementById('emailInput').value.trim();
                 const password = document.getElementById('passwordInput').value;
-                const name = document.getElementById('nameInput').value;
-                if(!email || !password) return alert('Email and password required.');
+                const name = document.getElementById('nameInput').value.trim();
+                if (!email || !password) return alert('Email and password are required.');
                 const btn = document.getElementById('loginBtn');
                 btn.disabled = true;
                 btn.innerHTML = '<i data-lucide="loader-2" class="lucide-spin"></i> Authenticating...';
@@ -376,10 +617,12 @@
                         await account.create(Appwrite.ID.unique(), email, password, name);
                         await account.createEmailPasswordSession(email, password);
                         await account.updatePrefs({ tier: 'starter' });
-                    } else { await account.createEmailPasswordSession(email, password); }
+                    } else {
+                        await account.createEmailPasswordSession(email, password);
+                    }
                     window.location.reload();
-                } catch(e) { 
-                    alert('Error: ' + e.message); 
+                } catch(e) {
+                    alert('Error: ' + e.message);
                     btn.disabled = false;
                     btn.innerHTML = isSignup ? 'Create Account <i data-lucide="user-plus"></i>' : 'Sign In <i data-lucide="arrow-right"></i>';
                     lucide.createIcons();
@@ -392,7 +635,7 @@
                 const oldHtml = btn.innerHTML;
                 btn.innerHTML = '<i data-lucide="loader-2" class="lucide-spin"></i> Creating...';
                 lucide.createIcons();
-                
+
                 let userTier = 'starter';
                 try {
                     const prefs = await account.getPrefs();
@@ -405,41 +648,29 @@
                 if (userTier === 'vip') limit = Infinity;
 
                 if (activeCount >= limit) {
-                    alert(`Limit Reached: Your current plan allows only ${limit} active event(s) at a time.\\n\\nPlease click your active event below and press "End Event", or upgrade for more capacity.`);
+                    alert(`Limit Reached: Your current plan allows only ${limit} active event(s) at a time.\n\nPlease click your active event below and press "End Event", or upgrade for more capacity.`);
                     btn.disabled = false;
                     btn.innerHTML = oldHtml;
                     return;
                 }
 
                 const eventName = prompt('Enter Event Name for TV Wall:');
-                if (!eventName) {
-                    btn.disabled = false;
-                    btn.innerHTML = oldHtml;
-                    return;
-                }
-                
-                const realEventId = 'evt_' + Math.random().toString(36).substr(2, 9);
+                if (!eventName) { btn.disabled = false; btn.innerHTML = oldHtml; return; }
 
+                const realEventId = 'evt_' + Math.random().toString(36).substr(2, 9);
                 let initialTheme = 'default';
                 try { initialTheme = localStorage.getItem('snapnexus_theme_preview') || 'default'; } catch (e) {}
 
                 try {
                     await databases.createDocument(cfg.DATABASE_ID, cfg.COLLECTION_ID, realEventId, {
-                        eventName: eventName,
-                        eventId: realEventId,
-                        tier: userTier,
-                        hostEmail: currentUser.email,
-                        status: 'active',
-                        theme: initialTheme
+                        eventName: eventName, eventId: realEventId, tier: userTier,
+                        hostEmail: currentUser.email, status: 'active', theme: initialTheme
                     });
-                    // Redirect according to tier
-                    if (userTier === 'vip') {
-                         window.location.href = `vip_dashboard.html?event=${realEventId}`;
-                    } else {
-                         window.location.href = `dashboard.html?event=${realEventId}`;
-                    }
-                } catch(err) { 
-                    alert('Failed to create event: ' + err.message); 
+                    window.location.href = userTier === 'vip'
+                        ? `vip_dashboard.html?event=${realEventId}`
+                        : `dashboard.html?event=${realEventId}`;
+                } catch(err) {
+                    alert('Failed to create event: ' + err.message);
                     btn.disabled = false;
                     btn.innerHTML = oldHtml;
                 }
