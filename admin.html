@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+    <script src="/config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapNexus | Admin Root</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Urbanist', sans-serif; background: #020617; color: #ffffff; padding: 20px; overflow-x: hidden; }
+        
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, #020617, #1e3a8a 30%, #3b82f6 65%, #4f46e5); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+
+        .container { max-width: 900px; margin: 40px auto; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; position: relative; z-index: 10; }
+        h1 { font-family: 'Syne', sans-serif; font-size: 2.5rem; margin-bottom: 5px; }
+        h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        
+        .login-box { text-align: center; padding: 100px 0; }
+        .login-box input { display: block; margin: 20px auto; width: 100%; max-width: 300px; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; font-size: 1.1rem; outline: none; }
+        .btn-physics { display: inline-flex; align-items: center; justify-content: center; background: #fff; color: #000; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-physics:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(255,255,255,0.5); }
+        .btn-physics:active { transform: translateY(1px); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .metric-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; }
+        .metric-value { font-family: 'Syne'; font-size: 2.5rem; font-weight: 800; color: #fbbf24; margin: 10px 0; }
+        .metric-label { font-size: 1rem; color: #94a3b8; font-weight: 600; }
+
+        .ad-item { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px;}
+        .ad-preview { width: 150px; height: 80px; background: #000; border-radius: 8px; object-fit: cover; }
+        .ad-actions { flex: 1; }
+        input[type="file"] { margin-bottom: 10px; }
+
+        #dashboard { display: none; }
+        .status-msg { margin-top: 10px; color: #cbd5e1; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="liquid-mesh"></div>
+
+    <div class="container" id="loginScreen">
+        <div class="login-box">
+            <h1>SnapNexus Core</h1>
+            <p style="color:#94a3b8;">Admin Clearance Required</p>
+            <input type="password" id="adminPass" placeholder="Enter override code">
+            <button class="btn-physics" onclick="checkAuth()">Authenticate</button>
+        </div>
+    </div>
+
+    <div class="container" id="dashboard">
+        <h1>Admin Operations</h1>
+        <p style="color:#94a3b8;">Welcome to the command deck.</p>
+
+        <h2>Live Telemetry</h2>
+        <div class="grid">
+            <div class="metric-card">
+                <div class="metric-label">Active Events</div>
+                <div class="metric-value" id="mActive">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Visits</div>
+                <div class="metric-value" id="mVisits">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Visits Today</div>
+                <div class="metric-value" id="mToday">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Visits This Week</div>
+                <div class="metric-value" id="mWeek">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Visits This Month</div>
+                <div class="metric-value" id="mMonth">0</div>
+            </div>
+        </div>
+
+        <h2>Ad Management for Free Tier (TV)</h2>
+        <p style="color:#94a3b8; margin-bottom:20px; font-size:0.9rem;">Upload 16:9 or ultra-wide images (approx 1920x200 or similar) to be injected into free tier TVs.</p>
+        
+        <div class="ad-item">
+            <img class="ad-preview" id="preview_ad1" src="fallback.jpg">
+            <div class="ad-actions">
+                <h3 style="margin-bottom:10px;">Ad Slot 1</h3>
+                <input type="file" id="file_ad1" accept="image/*">
+                <br>
+                <button class="btn-physics" onclick="uploadAd(1)">Push Ad 1</button>
+                <p class="status-msg" id="status_ad1"></p>
+            </div>
+        </div>
+
+        <div class="ad-item">
+            <img class="ad-preview" id="preview_ad2" src="fallback.jpg">
+            <div class="ad-actions">
+                <h3 style="margin-bottom:10px;">Ad Slot 2</h3>
+                <input type="file" id="file_ad2" accept="image/*">
+                <br>
+                <button class="btn-physics" onclick="uploadAd(2)">Push Ad 2</button>
+                <p class="status-msg" id="status_ad2"></p>
+            </div>
+        </div>
+
+        <div class="ad-item">
+            <img class="ad-preview" id="preview_ad3" src="fallback.jpg">
+            <div class="ad-actions">
+                <h3 style="margin-bottom:10px;">Ad Slot 3</h3>
+                <input type="file" id="file_ad3" accept="image/*">
+                <br>
+                <button class="btn-physics" onclick="uploadAd(3)">Push Ad 3</button>
+                <p class="status-msg" id="status_ad3"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cfg = window.SnapNexus;
+        const client = new Appwrite.Client().setEndpoint(cfg.ENDPOINT).setProject(cfg.PROJECT_ID);
+        const databases = new Appwrite.Databases(client);
+        const storage = new Appwrite.Storage(client);
+
+        function checkAuth() {
+            if (document.getElementById('adminPass').value === 'admin') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadData();
+                loadAdPreviews();
+            } else {
+                alert('Access Denied.');
+            }
+        }
+
+        async function loadData() {
+            try {
+                // 1. Live Events
+                const activeRes = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                    Appwrite.Query.equal('status', 'active'),
+                    Appwrite.Query.limit(10)
+                ]);
+                document.getElementById('mActive').innerText = activeRes.total;
+
+                // 2. Visits Telemetry
+                const visitsRes = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                    Appwrite.Query.equal('status', 'visit'),
+                    Appwrite.Query.limit(10)
+                ]);
+                document.getElementById('mVisits').innerText = visitsRes.total;
+
+                // 3. Visits Today
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const isoStartOfDay = today.toISOString();
+                const todayRes = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                    Appwrite.Query.equal('status', 'visit'),
+                    Appwrite.Query.greaterThanEqual('$createdAt', isoStartOfDay),
+                    Appwrite.Query.limit(10)
+                ]);
+                document.getElementById('mToday').innerText = todayRes.total;
+
+                // 4. Visits This Week
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                const weekRes = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                    Appwrite.Query.equal('status', 'visit'),
+                    Appwrite.Query.greaterThanEqual('$createdAt', startOfWeek.toISOString()),
+                    Appwrite.Query.limit(10)
+                ]);
+                document.getElementById('mWeek').innerText = weekRes.total;
+
+                // 5. Visits This Month
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const monthRes = await databases.listDocuments(cfg.DATABASE_ID, cfg.COLLECTION_ID, [
+                    Appwrite.Query.equal('status', 'visit'),
+                    Appwrite.Query.greaterThanEqual('$createdAt', startOfMonth.toISOString()),
+                    Appwrite.Query.limit(10)
+                ]);
+                document.getElementById('mMonth').innerText = monthRes.total;
+
+            } catch (err) {
+                console.error("Telemetry error", err);
+            }
+        }
+
+        function loadAdPreviews() {
+            const fallback = "https://images.unsplash.com/photo-1549451371-64aa98a6fcf0?w=800&q=80";
+            for (let i=1; i<=3; i++) {
+                const url = `${cfg.ENDPOINT}/storage/buckets/${cfg.BUCKET_ID}/files/global_ad_${i}/view?project=${cfg.PROJECT_ID}`;
+                const img = document.getElementById(`preview_ad${i}`);
+                const temp = new Image();
+                temp.onload = () => img.src = url;
+                temp.onerror = () => img.src = fallback;
+                temp.src = url;
+            }
+        }
+
+        async function uploadAd(slot) {
+            const fileInput = document.getElementById(`file_ad${slot}`);
+            const statusLabel = document.getElementById(`status_ad${slot}`);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                statusLabel.innerText = "Please select an image first.";
+                return;
+            }
+
+            statusLabel.innerText = "Uploading ad to grid...";
+            const adId = `global_ad_${slot}`;
+
+            try {
+                // Attempt to delete existing first
+                try {
+                    await storage.deleteFile(cfg.BUCKET_ID, adId);
+                } catch(e) {} // ignore if not found
+
+                // Create new
+                await storage.createFile(cfg.BUCKET_ID, adId, file);
+                
+                statusLabel.innerText = "Ad synced to network successfully.";
+                fileInput.value = "";
+                loadAdPreviews(); // refresh preview
+
+            } catch (err) {
+                statusLabel.innerText = "Error pushing ad: " + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

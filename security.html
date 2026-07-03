@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_qTBMwhJu6UwxVHTpDkL2dr2ryQDBF776uQG573GjYbbj',{api_host:'https://us.i.posthog.com', defaults:'2026-01-30'})
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Security — SnapNexus</title>
+    <meta name="description" content="SnapNexus Security — how we protect your event photos, data, and authentication.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta property="og:image" content="https://snapnexus.in/SNAPN.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Urbanist:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,500;1,500&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('snapnexus_theme_preview') || 'default';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ---------- Theme tokens ---------- */
+        :root { --font-brand: 'Syne', sans-serif; }
+        :root,
+        [data-theme="default"] {
+            --bg-mesh-a: #020617; --bg-mesh-b: #1e3a8a; --bg-mesh-c: #3b82f6; --bg-mesh-d: #4f46e5;
+            --bg-solid: #020617;
+            --surface-bg: rgba(20, 30, 55, 0.45);
+            --surface-border: rgba(255, 255, 255, 0.2);
+            --surface-border-soft: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-strong: #4f46e5;
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Urbanist', system-ui, sans-serif;
+            --radius-card: 32px;
+        }
+        [data-theme="wedding"] {
+            --bg-mesh-a: #fff7f3; --bg-mesh-b: #fde2e7; --bg-mesh-c: #f6c9d0; --bg-mesh-d: #e9c9a8;
+            --bg-solid: #fdf6f2;
+            --surface-bg: rgba(255, 255, 255, 0.55);
+            --surface-border: rgba(196, 154, 108, 0.45);
+            --surface-border-soft: rgba(196, 154, 108, 0.25);
+            --text-primary: #5c3a3a;
+            --text-secondary: #8a6a64;
+            --accent: #c9a063;
+            --accent-strong: #a9824f;
+            --accent-soft: rgba(201, 160, 99, 0.18);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+            --radius-card: 36px;
+        }
+        [data-theme="corporate"] {
+            --bg-mesh-a: #000000; --bg-mesh-b: #ffc400; --bg-mesh-c: #ff5e00; --bg-mesh-d: #22d3ee;
+            --bg-solid: #020203;
+            --surface-bg: rgba(255, 255, 255, 0.05);
+            --surface-border: rgba(255, 255, 255, 0.16);
+            --surface-border-soft: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #d4d4d8;
+            --accent: #ffc83d;
+            --accent-strong: #ff7a1a;
+            --accent-soft: rgba(255, 200, 61, 0.18);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-card: 16px;
+        }
+        [data-theme="party"] {
+            --bg-mesh-a: #070110; --bg-mesh-b: #1a0530; --bg-mesh-c: #5b0fb5; --bg-mesh-d: #ff00c8;
+            --bg-solid: #070110;
+            --surface-bg: rgba(20, 4, 32, 0.5);
+            --surface-border: rgba(255, 0, 200, 0.4);
+            --surface-border-soft: rgba(255, 0, 200, 0.2);
+            --text-primary: #f5f3ff;
+            --text-secondary: #c4b5fd;
+            --accent: #00f0ff;
+            --accent-strong: #ff00c8;
+            --accent-soft: rgba(0, 240, 255, 0.18);
+            --font-heading: 'Urbanist', sans-serif;
+            --font-body: 'Urbanist', system-ui, sans-serif;
+            --radius-card: 24px;
+        }
+
+        body { font-family: var(--font-body); background: var(--bg-solid); color: var(--text-primary); overflow-x: hidden; line-height: 1.5; transition: background 0.4s ease, color 0.4s ease; }
+        h1, h2, h3, .price, .step-number { font-family: var(--font-heading); }
+
+        /* ---- Backgrounds ---- */
+        .liquid-mesh { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: radial-gradient(circle at 20% 30%, var(--bg-mesh-a), var(--bg-mesh-b) 30%, var(--bg-mesh-c) 65%, var(--bg-mesh-d)); background-size: 200% 200%; animation: liquidShift 16s ease infinite alternate; transition: background 0.6s ease; }
+        @keyframes liquidShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 50%; } }
+        [data-theme="corporate"] .liquid-mesh { background: radial-gradient(ellipse 60% 50% at 18% 15%, rgba(10, 69, 112, 0.55), transparent 60%), radial-gradient(ellipse 50% 45% at 8% 92%, rgba(10, 69, 112, 0.35), transparent 60%), #020203; animation: none; }
+        [data-theme="corporate"] .liquid-mesh::before { content: ''; position: absolute; top: 6%; left: -10%; width: 78%; height: 80%; background: radial-gradient(ellipse 70% 65% at 40% 58%, #f3fa7a 0%, #e9d34a 16%, #d9a01f 32%, #b16d02 50%, #7a4400 66%, transparent 82%); border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; filter: blur(45px); animation: corporateBlobMorph 26s ease-in-out infinite alternate; }
+        @keyframes corporateBlobMorph { 0% { border-radius: 38% 62% 58% 42% / 52% 46% 54% 48%; transform: rotate(-4deg) scale(1); } 50% { border-radius: 48% 52% 45% 55% / 45% 55% 48% 52%; transform: rotate(2deg) scale(1.04); } 100% { border-radius: 42% 58% 50% 50% / 50% 48% 52% 50%; transform: rotate(-6deg) scale(1); } }
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"); opacity: 0.4; }
+
+        /* ---- Glass utilities ---- */
+        .glass-deep { background: var(--surface-bg); backdrop-filter: blur(24px); border: 1px solid var(--surface-border-soft); transition: background 0.4s ease, border-color 0.4s ease; }
+        .glass-card { background: var(--surface-bg); backdrop-filter: blur(12px); border: 1px solid var(--surface-border); border-radius: var(--radius-card); transition: transform 0.25s ease, box-shadow 0.3s, background 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease; }
+
+        /* ---- Header ---- */
+        .sticky-header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 20px 40px; transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); background: rgba(2, 6, 23, 0.65); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sticky-header.shrink { padding: 12px 40px; background: rgba(2, 6, 23, 0.85); }
+        .header-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .logo-img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); background: #fff; }
+        .logo-text { font-family: var(--font-brand); font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, #fde047, #f59e0b, #d97706); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; }
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a { color: #e2e8f0; text-decoration: none; font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: #60a5fa; }
+
+        /* ---- Buttons ---- */
+        .btn-physics { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 28px; font-weight: 800; font-size: 1rem; font-family: var(--font-body); border-radius: 60px; border: none; cursor: none; transition: box-shadow 0.2s, background 0.2s, filter 0.2s; background: linear-gradient(105deg, var(--accent), var(--accent-strong)); color: white; box-shadow: 0 8px 20px var(--accent-soft); text-decoration: none; will-change: transform; }
+        .btn-physics:hover { filter: brightness(1.1); box-shadow: 0 14px 32px var(--accent-soft); }
+        .btn-physics:active { filter: brightness(0.95); }
+        .btn-outline { background: rgba(255,255,255,0.08); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); box-shadow: none; }
+        .btn-outline:hover { background: rgba(255,255,255,0.15); }
+
+        /* ---- Layout ---- */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+        /* ---- Section titles ---- */
+        .section-title { text-align: center; font-size: 2.6rem; font-weight: 800; margin: 100px 0 48px; color: var(--text-primary); }
+
+        /* ---- Legal content ---- */
+        .legal-content { padding: 48px; margin-bottom: 80px; }
+        .legal-content p { color: var(--text-secondary); margin-bottom: 16px; }
+        .legal-content ul { margin: 0 0 24px 20px; color: var(--text-secondary); }
+        .legal-content li { margin-bottom: 12px; line-height: 1.6; }
+        .legal-content a { color: var(--accent); font-weight: 600; text-decoration: underline; }
+
+        /* ---- Footer ---- */
+        footer { margin-top: 100px; padding: 60px 32px 40px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 32px; margin-bottom: 32px; flex-wrap: wrap; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-weight: 600; transition: color 0.2s; cursor: none; }
+        footer p { color: var(--text-secondary); }
+        footer p a { color: var(--accent); font-weight: 600; text-decoration: underline; transition: color 0.2s; }
+        footer p a:hover { color: var(--accent-strong); }
+
+        /* ---- Custom cursor ---- */
+        #cursor-dot, #cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%; transform: translate(-50%, -50%); }
+        #cursor-dot { width: 8px; height: 8px; background: var(--accent); transition: background 0.3s, transform 0.1s; }
+        #cursor-ring { width: 36px; height: 36px; border: 2px solid var(--accent); opacity: 0.6; transition: border-color 0.3s, transform 0.15s ease, opacity 0.3s, width 0.3s, height 0.3s; }
+        #cursor-ring.hovered { width: 52px; height: 52px; opacity: 0.9; border-color: var(--accent); background: var(--accent-soft); }
+        #cursor-ring.clicking { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+        @media (pointer: coarse) { #cursor-dot, #cursor-ring { display: none; } body { cursor: auto; } .btn-physics, .footer-links a { cursor: pointer; } }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) { .sticky-header { padding: 16px 20px; } .nav-links { display: none; } .container { padding: 0 20px; } .legal-content { padding: 32px 24px; } }
+    </style>
+</head>
+<body>
+    <!-- Custom cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <div class="liquid-mesh"></div>
+    <div class="noise-overlay"></div>
+
+    <header class="sticky-header" id="stickyHeader">
+        <div class="header-container">
+            <a class="logo" href="index.html" aria-label="SnapNexus Home"><img src="SNAPN.png" alt="SnapNexus Logo" class="logo-img" onerror="this.style.display='none'"><span class="logo-text">SnapNexus</span></a>
+            <nav class="nav-links"><a href="index.html#features">Features</a><a href="index.html#pricing">Pricing</a><a href="login.html" id="navLoginBtn">Host Login</a><a href="dashboard.html" class="btn-physics btn-outline" style="padding: 8px 20px;">Dashboard</a></nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 160px;">
+        <h2 class="section-title" style="margin-top: 0;">Security</h2>
+        <div class="glass-card legal-content">
+            <p>We take the security of your event photos and data seriously. Here's how it's handled.</p>
+            <ul>
+                <li>All photos and data are stored on Appwrite cloud with encryption at rest.</li>
+                <li>Authentication is handled via Firebase.</li>
+                <li>We do not store payment card details.</li>
+            </ul>
+            <p>Questions about our security practices? Contact us at <a href="mailto:sooperfast.net@yahoo.com">sooperfast.net@yahoo.com</a>.</p>
+        </div>
+    </main>
+
+    <footer class="glass-deep">
+        <div class="footer-links"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="security.html">Security</a><a href="mailto:sooperfast.net@yahoo.com">Contact Support</a><a href="https://soni-tech-solutions.vercel.app" target="_blank" rel="noopener">Report Issue</a></div>
+        <p>© 2026 SnapNexus. A product by <a href="https://soni-tech-solutions.vercel.app/" target="_blank" rel="noopener">Soni Tech Solutions</a>.</p>
+    </footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const header = document.getElementById('stickyHeader');
+        ScrollTrigger.create({
+            trigger: document.body, start: "top top", end: "+=100",
+            onUpdate: (self) => header.classList.toggle('shrink', self.progress > 0)
+        });
+
+        // ── Custom Cursor ─────────────────────────────────────────────────
+        (function () {
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+            document.body.style.cursor = 'none';
+            const dot = document.getElementById('cursor-dot');
+            const ring = document.getElementById('cursor-ring');
+            let mx = -200, my = -200, rx = -200, ry = -200;
+
+            document.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                gsap.set(dot, { x: mx, y: my });
+            });
+
+            (function lerpRing() {
+                rx += (mx - rx) * 0.12;
+                ry += (my - ry) * 0.12;
+                gsap.set(ring, { x: rx, y: ry });
+                requestAnimationFrame(lerpRing);
+            })();
+
+            const hoverEls = document.querySelectorAll('.btn-physics, .glass-card, .footer-links a, .nav-links a, .legal-content a');
+            hoverEls.forEach(el => {
+                el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+                el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+            });
+
+            document.addEventListener('mousedown', () => ring.classList.add('clicking'));
+            document.addEventListener('mouseup', () => ring.classList.remove('clicking'));
+        })();
+    </script>
+</body>
+</html>
